@@ -1,0 +1,8 @@
+.enyo-map {
+	overflow: hidden;
+	position: relative;
+}
+
+.map-icon {
+	top: -19px;
+}

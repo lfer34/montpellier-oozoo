@@ -1,0 +1,120 @@
+
+/* ############ */
+/* ## PANELS ## */
+/* ############ */
+
+
+.panels > * {
+	width: 320px;
+	box-shadow: -4px 0px 8px rgba(0,0,0,0.35);
+	-moz-box-shadow: -4px 0px 8px rgba(0,0,0,0.35);
+	-o-box-shadow: -4px 0px 8px rgba(0,0,0,0.35);
+	-webkit-box-shadow: -4px 0px 12px rgba(0,0,0,0.4);
+}
+
+.wide {
+	min-width:100%;
+}
+
+
+/* ############ */
+/* ## BUTTON ## */
+/* ############ */
+
+
+.button {
+	border-radius: 5px;
+}
+
+
+/* ############## */
+/* ## CHECKBOX ## */
+/* ############## */
+
+
+.checkbox {
+	padding-bottom: 32px;
+}
+
+
+/* ########### */
+/* ## POPUP ## */
+/* ########### */
+
+
+.popup-light {
+	padding: 5px;
+	border: 1px solid #ddd;
+	border-radius: 10px;
+}
+
+.popup-light > * {
+	margin: 10px;
+}
+
+.popup-light, .popup-light-tip{
+	background-color: #EAEAEA;
+	color: #333;
+	box-shadow: 0px 0px 10px rgba(0,0,0,0.6);
+	-moz-box-shadow: 0px 0px 10px rgba(0,0,0,0.6);
+	-o-box-shadow: 0px 0px 10px rgba(0,0,0,0.6);
+	-webkit-box-shadow: 0px 0px 10px rgba(0,0,0,0.6);
+}
+
+.popup-tip-container {
+	margin: 0 auto;
+	width: 40px;
+	height: 16px;
+	position: relative;
+	overflow: hidden;
+}
+
+.popup-light-tip {
+	width: 15px;
+	height: 15px;
+	padding: 1px;
+
+	margin: -8px auto 0;
+	-moz-transform: rotate(45deg);
+	-webkit-transform: rotate(45deg);
+	-ms-transform: rotate(45deg);
+	-o-transform: rotate(45deg);
+	transform: rotate(45deg);
+}
+
+
+/* ########## */
+/* ## TEXT ## */
+/* ########## */
+
+
+.item-secondary {
+	font-size: 16px;
+}
+
+.label {
+	color: #1879CD;
+	font-size: 15px;
+	text-transform: uppercase;
+}
+
+
+/* ############# */
+/* ## TOOLBAR ## */
+/* ############# */
+
+.toolbar > * {
+	margin: 0px;
+	padding: 0px;
+}
+
+
+
+
+.icon {
+	width: 32px;
+	height: 32px;
+	display: inline-block;
+	background-position: left top;
+	background-repeat: no-repeat;
+}

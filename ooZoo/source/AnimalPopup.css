@@ -1,0 +1,44 @@
+
+/* ############ */
+/* ## HEADER ## */
+/* ############ */
+
+
+.map-animal-popup-title {
+	text-align: center;
+	font-weight: bold;
+}
+
+
+/* ########### */
+/* ## POPUP ## */
+/* ########### */
+
+
+.map-animal-popup {
+	max-width: 250px;
+	margin: 10px 10px 0 10px;
+}
+
+.map-animal-popup .popup-light {
+	border: none;
+}
+
+.map-animal-popup-empty {
+	padding: 5px;
+	text-align: center;
+}
+
+
+/* ########## */
+/* ## LIST ## */
+/* ########## */
+
+
+.map-animal-popup-groupbox > :first-child:last-child {
+	border-radius: 8px 8px 8px 8px;
+}
+
+.map-animal-popup-list {
+	max-height: 200px;
+}

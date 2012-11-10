@@ -1,0 +1,19 @@
+
+/* ########### */
+/* ## POPUP ## */
+/* ########### */
+
+
+.map-popup {
+	max-width: 250px;
+	margin: 10px 10px 0 10px;
+}
+
+.map-popup .popup-light {
+	border: none;
+}
+
+.map-popup-empty {
+	padding: 5px;
+	text-align: center;
+}

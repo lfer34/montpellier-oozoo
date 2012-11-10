@@ -1,0 +1,112 @@
+
+/* ############ */
+/* ## HEADER ## */
+/* ############ */
+
+
+.map-header-title
+{
+	text-align: center;
+}
+
+
+/* ############# */
+/* ## TOOLBAR ## */
+/* ############# */
+
+
+.map-toolbar-group-button
+{
+	text-align: center;
+	margin: 0px;
+	padding: 0px;
+}
+
+.map-toolbar-group-button > *
+{
+	margin: 5px;
+}
+
+.map-toolbar-zoom-button {
+	padding: 0 10px 0 10px;
+}
+
+.map-toolbar-zoom-button:active:hover .icon {
+	background-position: left bottom;
+}
+
+
+/* ########### */
+/* ## POPUP ## */
+/* ########### */
+
+
+/* -----  OPTIONS POPUP  ----- */
+
+.map-options-popup {
+	min-width: 250px;
+	right: 10px;
+	bottom: 15px;
+}
+
+.map-options-popup > * {
+	margin: 10px;
+}
+
+.map-options-toggle-button {
+	background-color: #35A8EE;
+	color: #F1F1F1;
+}
+
+.map-options-label {
+	line-height: 32px;
+	vertical-align: middle;
+}
+
+.map-options-map-label {
+	line-height: 40px;
+	vertical-align: middle;
+}
+
+.map-options-map-picker {
+	width: 140px;
+}
+
+/* -----  LEGEND POPUP  ----- */
+
+.map-legend-popup {
+	width: 230px;
+	right: 10px;
+	top: 10px;
+}
+
+.map-legend-popup > * {
+	margin: 10px;
+}
+
+.map-legend-popup-title {
+	text-align: center;
+	font-weight: bold;
+}
+
+.map-legend-popup-list {
+	max-height: 200px;
+}
+
+.map-legend-popup-item {
+	min-height: 40px;
+}
+
+.map-legend-popup-color {
+	width: 40px;
+	height: 40px;
+	border-radius: 6px;
+	margin: 5px;
+	float: left;
+}
+
+.map-legend-popup-text {
+	margin: 0 0 0 60px;
+	vertical-align: middle;
+	line-height: 50px;
+}

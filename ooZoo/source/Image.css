@@ -1,0 +1,50 @@
+
+.image-body {
+	background-color: #888;
+}
+
+/* ############ */
+/* ## HEADER ## */
+/* ############ */
+
+
+.image-toolbar {
+	margin: 0px;
+	padding: 0px;
+}
+
+.image-toolbar > * {
+	margin: 5px;
+}
+
+.image-insert {
+	height: 100% !important;
+}
+
+/* Boutton retour */
+
+.image-button-back {
+	position: absolute;
+	bottom: 10px;
+	left: 10px;
+	z-index: 100;
+}
+
+
+.images-scroller {
+	padding: 10px 10px 10px 5px;
+}
+
+.images-container {
+	height: 100%;
+	width: 100%;
+}
+
+.images-image {
+	vertical-align: middle;
+	text-align: center;
+}
+
+.images-image > * {
+	height: 100%;
+}

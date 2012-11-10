@@ -1,0 +1,21 @@
+enyo.depends(
+	"$lib/onyx",
+	"$lib/layout",
+	"$lib/DividerDrawer",
+	"map",
+	"Site.js",
+	"App.css",
+	"App.js",
+	"Menu.css",
+	"Menu.js",
+	"Map.css",
+	"Map.js",
+	"Card.css",
+	"Card.js",
+	"Image.css",
+	"Image.js",
+	"PoiPopup.css",
+	"PoiPopup.js",
+	"AnimalPopup.css",
+	"AnimalPopup.js"
+);
