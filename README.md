@@ -10,9 +10,9 @@ une tablette numérique et les grands écrans interactifs de la Ville.
 Vous y trouverez la liste des animaux, leurs enclos géolocalisés sur une carte, leurs fiches descriptives 
 et diverses informations sur le Zoo de la Ville de Montpellier.
 
-  - Tester l'application : **[http://zoo.cyrilmoral.es](http://zoo.cyrilmoral.es "Tester l'application")**
+  - Tester l'application : [**http://zoo.cyrilmoral.es**](http://zoo.cyrilmoral.es "Tester l'application")
 
-![Application](https://bitbucket.org/palmsnipe/ooZoo/raw/a99df1f1569b3b31f1b329583f484554ff43da97/images/captures/application.jpg "Capture de l'application")
+![Application](https://bitbucket.org/palmsnipe/oozoo/raw/2535845b92c7a1cfe65ab3ea2193142f5b398229/images/captures/application.jpg "Capture de l'application")
 
 ## Compatibilité
 
