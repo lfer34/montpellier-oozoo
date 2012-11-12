@@ -1,7 +1,7 @@
 
 // minifier: path aliases
 
-enyo.path.addPaths({onyx: "C://Users/Cyril/Documents/site/app/enyo/tools/../../lib/onyx/", onyx: "C://Users/Cyril/Documents/site/app/enyo/tools/../../lib/onyx/source/", layout: "C://Users/Cyril/Documents/site/app/enyo/tools/../../lib/layout/", DividerDrawer: "C://Users/Cyril/Documents/site/app/enyo/tools/../../lib/DividerDrawer/", map: "../source/map/"});
+enyo.path.addPaths({onyx: "C://Users/Cyril/Documents/Projets/zoo/ooZoo/enyo/tools/../../lib/onyx/", onyx: "C://Users/Cyril/Documents/Projets/zoo/ooZoo/enyo/tools/../../lib/onyx/source/", layout: "C://Users/Cyril/Documents/Projets/zoo/ooZoo/enyo/tools/../../lib/layout/", DividerDrawer: "C://Users/Cyril/Documents/Projets/zoo/ooZoo/enyo/tools/../../lib/DividerDrawer/", map: "../source/map/"});
 
 // Icon.js
 
@@ -10586,6 +10586,35 @@ components: [ {
 kind: "FittableRows",
 classes: "item-secondary",
 components: [ {
+kind: "GTS.DividerDrawer",
+caption: "Venir au zoo",
+classes: "gts-DividerDrawer",
+open: !1,
+components: [ {
+kind: "FittableRows",
+classes: "info-content",
+components: [ {
+content: "Vous \u00eates en voiture",
+classes: "info-name"
+}, {
+content: "Parc zoologique de Montpellier"
+}, {
+content: "50, avenue Agropolis"
+}, {
+content: "34090 Montpellier"
+}, {
+content: "Un parking gratuit est \u00e0 votre disposition devant l'entr\u00e9e du parc zoologique.",
+style: "font-weight: bold;"
+}, {
+tag: "br"
+}, {
+content: "Vous \u00eates en transports en commun",
+classes: "info-name"
+}, {
+content: 'Depuis l\'arr\u00eat de Tram "Saint-Eloi" (ligne 1), prendre le bus "La Navette" (ligne 13), direction Universit\u00e9s, et descendre devant l\'entr\u00e9e du parc zoologique (arr\u00eat "zoo").'
+} ]
+} ]
+}, {
 kind: "GTS.DividerDrawer",
 caption: "Les tarifs",
 classes: "gts-DividerDrawer",
