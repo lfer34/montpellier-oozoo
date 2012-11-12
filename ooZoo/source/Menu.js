@@ -81,6 +81,18 @@ enyo.kind({
 				]},
 				{kind: "Scroller", classes: "enyo-fit", thumb: true, components: [
 					{kind: "FittableRows", classes: "item-secondary", components: [
+						{kind: "GTS.DividerDrawer", caption: "Venir au zoo", classes: "gts-DividerDrawer", open: false, components:[
+							{kind: "FittableRows", classes: "info-content", components: [
+								{content: "Vous êtes en voiture", classes: "info-name"},
+								{content: "Parc zoologique de Montpellier"},
+								{content: "50, avenue Agropolis"},
+								{content: "34090 Montpellier"},
+								{content: "Un parking gratuit est à votre disposition devant l'entrée du parc zoologique.", style: "font-weight: bold;"},
+								{tag: "br"},
+								{content: "Vous êtes en transports en commun", classes: "info-name"},
+								{content: "Depuis l'arrêt de Tram \"Saint-Eloi\" (ligne 1), prendre le bus \"La Navette\" (ligne 13), direction Universités, et descendre devant l'entrée du parc zoologique (arrêt \"zoo\")."},
+							]}
+						]},
 						{kind: "GTS.DividerDrawer", caption: "Les tarifs", classes: "gts-DividerDrawer", open: false, components:[
 							{kind: "FittableRows", classes: "info-content", components: [
 								{content: "Le parc zoologique est gratuit !", classes: "info-name"},
