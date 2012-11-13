@@ -68,7 +68,7 @@ enyo.kind({
 						]}
 						// {kind: "onyx.Button", content: "Pré-sélection", ontap: "showPopup", popup: "selectPopup"}
 					]},
-					{kind: "List", name: "animalList", classes: "menu-animal-list", fit: true, multiSelect: false, onSetupItem: "setupAnimal", components: [
+					{kind: "List", name: "animalList", classes: "menu-animal-list", rowsPerPage: 10, fit: true, multiSelect: false, onSetupItem: "setupAnimal", components: [
 						{name: "divider", classes: "menu-animal-divider"},
 						{name: "animal", classes: "animal-item", ontap: "animalTap", components: [
 							{kind: "Image", src: "assets/logo2.png", name: "avatar", classes: "animal-icon"},
