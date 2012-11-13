@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="format-detection" content="telephone=no" />
+		<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        <title>Zoo de Montpellier</title>
+        <script type="text/javascript" src="cordova-2.2.0.js"></script>
+		<!-- EnyoJS -->
+		<link href="build/enyo.css" rel="stylesheet"/>
+		<link href="build/app.css" rel="stylesheet"/>
+		<script src="build/enyo.js"></script>
+		<script src="build/app.js"></script>
+    </head>
+    <body class="enyo-unselectable">
+        <script>
+			enyo.dispatcher.listen(document, "deviceready");
+			// ECRANS DE LA VILLE DE MONTPELLIER
+			enyo.ville = false;
+			
+			new App().renderInto(document.body);
+        </script>
+    </body>
+</html>

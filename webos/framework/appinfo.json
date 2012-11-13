@@ -1,0 +1,10 @@
+{
+	"id": "com.cyrilmorales.zoo",
+	"version": "0.0.1",
+	"vendor": "Cyril Morales",
+	"type": "web",
+	"main": "index.html",
+	"title": "Zoo de Montpellier",
+	"icon": "icon.png",
+	"uiRevision": 2
+}
