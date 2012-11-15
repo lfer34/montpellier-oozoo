@@ -13,6 +13,7 @@ enyo.kind({
 		map: false
 	},
 	components: [
+		{kind: "Signals", ondeviceready: "deviceReady"},
 		{kind: "WebService", name:"data", url: "http://zoo.cyrilmoral.es/data.asp", onResponse: "dataResponse", onError: "dataError"},
 		{kind: "FittableRows", classes: "enyo-fit", components: [
 			{kind: "Panels", name: "mainPanels", classes: "panels enyo-fit", fit: true, realtimeFit: false, arrangerKind: "CollapsingArranger", onTransitionFinish:"updateMap", components: [
@@ -41,6 +42,9 @@ enyo.kind({
 	rendered: function() {
 		this.inherited(arguments);
 
+	},
+	deviceReady: function() {
+		
 	},
 	updateMap: function(inSender, inEvent) {
 		if (inEvent.originator.name == "mainPanels" && inSender.getControls()[inEvent.toIndex].name == "contentPanels" && this.map == true) {
