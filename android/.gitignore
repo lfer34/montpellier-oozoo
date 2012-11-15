@@ -1,2 +1,5 @@
 bin
 gen
+assets/www/assets
+assets/www/build
+assets/www/lib
