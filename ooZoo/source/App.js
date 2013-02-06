@@ -138,7 +138,7 @@ enyo.kind({
 					"classe": inData.animal[i].classe,
 					"description": inData.animal[i].description,
 					"details": inData.animal[i].details_zone,
-					"duree_gestation": inData.animal[i].details_duree_gestation,
+					"duree_gestation": inData.animal[i].duree_gestation,
 					"famille": inData.animal[i].famille,
 					"longevite": inData.animal[i].longevite,
 					"nb_gestation": inData.animal[i].nb_gestation,

@@ -32,7 +32,7 @@ enyo.kind({
 				{kind: "onyx.Button", classes: "button", content: "Options", ontap: "showPopup", popup: "optionsPopup"}
 			]}
 		]},
-		{kind: "onyx.Popup", name: "optionsPopup", modal: false, floating: true, classes:"enyo-unselectable popup-light map-options-popup", components: [
+		{kind: "onyx.Popup", name: "optionsPopup", modal: true, floating: true, classes:"enyo-unselectable popup-light map-options-popup", components: [
 			{kind: "FittableColumns", fit: true, components: [
 				{content: "Popup centrée", classes: "label map-options-label", fit: true},
 				{kind:"onyx.Checkbox", name: "centeredCheckbox", classes: "checkbox", checked: false, onchange:"popupCenteredChanged", disabled: true}

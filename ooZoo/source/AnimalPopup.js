@@ -9,7 +9,7 @@
 enyo.kind({
 	name: "AnimalPopup",
 	components: [
-		{kind: "onyx.Popup", name: "popup", modal: false, centered: false, floating: true, scrim: false, classes:"enyo-unselectable map-animal-popup", components: [
+		{kind: "onyx.Popup", name: "popup", modal: true, centered: false, floating: true, scrim: false, classes:"enyo-unselectable map-animal-popup", components: [
 			{classes: "popup-light", components: [
 				{name: "title", classes: "map-animal-popup-title", content: "Enclos"},
 				{kind: "onyx.Groupbox", name: "noAnimal", classes: "map-animal-popup-groupbox", showing: false, components: [
