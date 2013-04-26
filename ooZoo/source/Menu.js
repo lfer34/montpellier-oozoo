@@ -13,7 +13,8 @@ enyo.kind({
 		onLoaded: ""
 	},
 	components: [
-		{kind: "WebService", name:"site", url: "http://zoo.cyrilmoral.es/sitezoomtp.asp", handleAs: "text", onResponse: "siteResponse", onError: "siteError"},
+		{kind: "WebService", name:"wsTexte", url: "http://cyrilmoral.es/texte.php", onResponse: "texteResponse", onError: "texteError"},
+		{kind: "WebService", name:"site", url: "http://cyrilmoral.es/sitezoomtp.php", handleAs: "text", onResponse: "siteResponse", onError: "siteError"},
 		{kind: "FittableRows", classes: "enyo-fit", components: [
 			{kind: "onyx.Toolbar", classes: "menu-header", components: [
 				{kind: "Image", src: "assets/logo.png", classes: "menu-header-logo"}
@@ -79,9 +80,9 @@ enyo.kind({
 						]}
 					]}
 				]},
-				{kind: "Scroller", classes: "enyo-fit", thumb: true, components: [
+				{kind: "Scroller", name: "scrollerInfo", classes: "enyo-fit", components: [
 					{kind: "FittableRows", classes: "item-secondary", components: [
-						{kind: "GTS.DividerDrawer", caption: "Venir au zoo", classes: "gts-DividerDrawer", open: false, components:[
+						{kind: "gts.DividerDrawer", caption: "Venir au zoo", classes: "gts-DividerDrawer", open: false, components:[
 							{kind: "FittableRows", classes: "info-content", components: [
 								{content: "Vous êtes en voiture", classes: "info-name"},
 								{content: "Parc zoologique de Montpellier"},
@@ -93,7 +94,7 @@ enyo.kind({
 								{content: "Depuis l'arrêt de Tram \"Saint-Eloi\" (ligne 1), prendre le bus \"La Navette\" (ligne 13), direction Universités, et descendre devant l'entrée du parc zoologique (arrêt \"zoo\")."},
 							]}
 						]},
-						{kind: "GTS.DividerDrawer", caption: "Les tarifs", classes: "gts-DividerDrawer", open: false, components:[
+						{kind: "gts.DividerDrawer", caption: "Les tarifs", classes: "gts-DividerDrawer", open: false, components:[
 							{kind: "FittableRows", classes: "info-content", components: [
 								{content: "Le parc zoologique est gratuit !", classes: "info-name"},
 								{content: "Le plan du parc est à 0,50 €."}
@@ -105,7 +106,7 @@ enyo.kind({
 								// "<tr><td>Adultes (18 ans et +)</td><td>6,50€</td><td>5,50€</td></tr>" + 
 								// "</table>"}
 						]},
-						{kind: "GTS.DividerDrawer", caption: "Les horaires", classes: "gts-DividerDrawer", open: false, components:[
+						{kind: "gts.DividerDrawer", caption: "Les horaires", classes: "gts-DividerDrawer", open: false, components:[
 							{kind: "FittableRows", classes: "info-content", components: [
 								{allowHtml: true, content: "<table>" +
 								"<tr><th>Périodes</th><th>Horaires</th></tr>" +
@@ -114,7 +115,7 @@ enyo.kind({
 								"</table>"}
 							]}
 						]},
-						{kind: "GTS.DividerDrawer", caption: "Se restaurer", classes: "gts-DividerDrawer", open: false, components:[
+						{kind: "gts.DividerDrawer", caption: "Se restaurer", classes: "gts-DividerDrawer", open: false, components:[
 							{kind: "FittableRows", classes: "info-content", components: [
 								{content: "Le restaurant de la serre amazonienne", classes: "info-name"},
 								{content: "Le restaurant l'Amazoone s'étend sur deux niveaux. Il permet d'avoir une vue panoramique sur l'ensemble de la serre et plus particulièrement sur l'enclos des sakis à face blanche et des tamarins. Le restaurant a une capacité de 96 places à l'intérieur et une terrasse extérieure de 80 places. Contact : 04 67 29 88 35"},
@@ -122,14 +123,14 @@ enyo.kind({
 								{content: "Tout au long de votre parcours dans le parc, vous pourrez profiter de nombreuses tables de pique-nique. Pensez à jeter vos déchets dans les poubelles et à faire le bon tri !"}
 							]}
 						]},
-						{kind: "GTS.DividerDrawer", caption: "Règlement intérieur", classes: "gts-DividerDrawer", open: false, components:[
+						{kind: "gts.DividerDrawer", caption: "Règlement intérieur", classes: "gts-DividerDrawer", open: false, components:[
 							{kind: "FittableRows", classes: "info-content", components: [
 								{content: "Merci de respecter cet espace de nature et le bien-être des animaux"},
 								{allowHtml: true, content: "<ul><li>Ne pas fumer</li><li>Ne pas nourrir les animaux</li><li>Ne pas pratiquer de sport (tricyles pour les enfants autorisés)</li><li>Circuler uniquement à pied</li><li>Aucun animal n'est autorisé à entrer, même tenu en laisse</li><li>Ne pas jeter vos déchets à terre</li><li>Ne pas jeter de projectiles sur les animaux</li><li>Rester calme devant les enclos</li><li>Ne pas cueillir la végétation</li></ul>"},
 								{content: "Les enfants des groupes scolaires et centres de vacances ou de loisirs doivent impérativement être sous surveillance de leurs accompagnateurs et respecter le précédent règlement."}
 							]}
 						]},
-						{kind: "GTS.DividerDrawer", caption: "Accès handicapés", classes: "gts-DividerDrawer", open: false, components:[
+						{kind: "gts.DividerDrawer", caption: "Accès handicapés", classes: "gts-DividerDrawer", open: false, components:[
 							{kind: "FittableRows", classes: "info-content", components: [
 								{content: "Le parc zoologique", classes: "info-name"},
 								{allowHtml: true, content: "Il est accessible à moins de 70%. Certaines zones, notamment celles des ours et des lions, sont difficiles d'accès (pente forte).<br />Nous vous proposons ce parcours afin que votre visite soit le plus agréable possible.<br />Notez que les zones plates ne sont pas lisses dans tout le parc. Des améliorations sont prévues."},
@@ -140,7 +141,7 @@ enyo.kind({
 					]}
 				]}
 			]},
-			{kind: "onyx.Toolbar", layoutKind: "FittableColumnsLayout", components: [
+			{kind: "onyx.Toolbar", classes: "menu-group", components: [
 				{classes: "menu-toolbar-about", fit: true, components: [
 					{kind: "onyx.Button", classes: "button", content: "Crédits", ontap: "showPopup", popup: "aboutPopup"}
 				]}
@@ -150,7 +151,7 @@ enyo.kind({
 			{content: "coucou"}
 		]},
 		{kind: "onyx.Popup", name: "aboutPopup", centered: true, modal: true, floating: true, scrim: true, classes:"popup-light about-popup", components: [
-			{content: "Développé par Cyril Morales", classes: "item-secondary"},
+			{content: "Développé par Cyril Moralès", classes: "item-secondary"},
 			{kind: "onyx.Groupbox", classes: "about-popup-groupbox", components: [
 				{kind: "FittableColumns", fit: true, value: "http://twitter.com/cyrilmorales", ontap: "openLink", components: [
 					{content: "Twitter", classes: "label", fit: true},
@@ -177,6 +178,7 @@ enyo.kind({
 			this.$.searchPickerContainer.hide();
 		}
 		this.$.site.send();
+		this.$.wsTexte.send();
 	},
 	gotoMenuPanel: function(inSender, inEvent) {
 		if (inSender.value != "map") {
@@ -198,28 +200,59 @@ enyo.kind({
 	siteResponse: function(inSender, inData) {
 		this.feeds = parseBrevesZoo(inData.data);
  		var feedUne = parseUneZoo(inData.data);
+
+		localStorage.setItem("actus", JSON.stringify(this.feeds));
+		localStorage.setItem("actusUne", JSON.stringify(feedUne));
+
  		this.$.imageFirstNews.setSrc(feedUne.image);
  		this.$.titleFirstNews.setContent(feedUne.titre);
  		this.$.contentFirstNews.setContent(feedUne.texte);
  		this.$.newsList.setCount(this.feeds.length > 4 ? 4 : this.feeds.length);
 	},
 	siteError: function(inSender, inData) {
-		console.log("ajax site error");
+		this.feeds = JSON.parse(localStorage.getItem("actus"));
+		var feedUne = JSON.parse(localStorage.getItem("actusUne"));
+		if (this.feeds !== null && feedUne !== null) {
+	 		this.$.imageFirstNews.setSrc(feedUne.image);
+	 		this.$.titleFirstNews.setContent(feedUne.titre);
+	 		this.$.contentFirstNews.setContent(feedUne.texte);
+	 		this.$.newsList.setCount(this.feeds.length > 4 ? 4 : this.feeds.length);
+ 		}
+		else {
+			console.log("ajax site error");
+		}
+	},
+	texteError: function(inSender, inData) {
+		enyo.zoo["texte"] = JSON.parse(localStorage.getItem("texte"));
+		if (enyo.zoo["texte"] !== null) {
+			var zones = [];
+			for (var item in enyo.zoo.texte.zone) {
+				zones.push({content: enyo.zoo.texte.zone[item].texte});
+			}
+			this.$.zonePicker.createComponents(zones, {owner: this});
+		}
+		else {
+			console.log("ajax texte error");
+		}
+	},
+	texteResponse: function(inSender, inData) {
+		enyo.zoo["texte"] = inData.data.reponse;
+		localStorage.setItem("texte", JSON.stringify(inData.data.reponse));
+		var zones = [];
+		for (var item in enyo.zoo.texte.zone) {
+			zones.push({content: enyo.zoo.texte.zone[item].texte});
+		}
+		this.$.zonePicker.createComponents(zones, {owner: this});
 	},
 	setupAnimal: function(inSender, inEvent) {
 		var i = inEvent.index;
 		var data = this.filter ? this.filtered : this.animals;
 		var item = data[i];
 
-		var zones = "";
-		for (var j = 0; j < item.zone.length; j++) {
-			zones += j ? " / " : "";
-			zones += enyo.zoo.texte.zone[item.zone[j]].texte;
-		}
 		this.$.name.setContent(item.nom);
-		this.$.region.setContent(zones);
-		if (item.image.length > 0) {
-			this.$.avatar.setSrc(enyo.zoo.param.image + item.image[0]);
+		this.$.region.setContent(item.zones);
+		if (item.images.length > 0) {
+			this.$.avatar.setSrc(enyo.zoo.imagefull + item.images[0]);
 		}
 		else {
 			this.$.avatar.setSrc("assets/logo2.png");
@@ -254,20 +287,10 @@ enyo.kind({
 			return tmp;
 		}
 
-		function findZone(zone, animal, filter) {
-			for (var i = 0; i < animal.zone.length; i++) {
-				if ((noAccent(zone[animal.zone[i]].texte)).match(filter)) {
-					return true;
-				}
-			}
-
-			return false;
-		}
-
 		var re = new RegExp("^" + noAccent(inFilter), "i");
 		var r = [];
 		for (var i=0, d; d=this.animals[i]; i++) {
-			if (d.nom.match(re) || (enyo.zoo.texte.classe[d.classe].texte).match(re) || findZone(enyo.zoo.texte.zone, d, re)) {
+			if (d.nom.match(re) || d.classe.match(re) || d.zones.match(re)) {
 				r.push(d);
 			}
 		}
@@ -283,12 +306,6 @@ enyo.kind({
 				return 0; });
 	},
 	setAnimalList: function() {
-		var zones = [];
-		for (var item in enyo.zoo.texte.zone) {
-			zones.push({content: enyo.zoo.texte.zone[item].texte});
-		}
-		this.$.zonePicker.createComponents(zones, {owner: this});
-
 		this.animals = enyo.zoo.animaux;
 		this.sortAnimals();
 		this.$.animalList.setCount(this.animals.length);

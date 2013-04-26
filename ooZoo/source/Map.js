@@ -20,7 +20,9 @@ enyo.kind({
 			{kind: "Map", name: "map", layer: "bing", bingCredentials: "AqwmKr40FdqD4Ntpo_ik3UOKXqG4uT5niPKJDhXkdNJhDqvwyscuJtWhZ72QVWAI", fit: true, onLoaded: "setMap"},
 			{kind: "onyx.Toolbar", layoutKind: "FittableColumnsLayout", noStretch: true, components: [
 				{kind: "onyx.Grabber", name: "grab", ontap: "grabMap"},
-				{kind: "onyx.Button", name: "menu", content: "Menu", classes: "button", ontap: "grabMap", showing: false},
+				{kind: "onyx.Button", name: "menu", classes: "button map-toolbar-zoom-button", content: "Menu", ontap: "grabMap", showing: false, components: [
+					{kind: "onyx.Icon", classes: "icon", src: "assets/accueil.png"}
+				]},
 				{classes: "map-toolbar-group-button", fit: true, components: [
 					{kind: "onyx.Button", classes: "button map-toolbar-zoom-button", ontap: "btnZoomOut", components: [
 						{kind: "onyx.Icon", classes: "icon", src: "assets/menu-icon-less.png"}
@@ -29,7 +31,9 @@ enyo.kind({
 						{kind: "onyx.Icon", classes: "icon", src: "assets/menu-icon-more.png"}
 					]}
 				]},
-				{kind: "onyx.Button", classes: "button", content: "Options", ontap: "showPopup", popup: "optionsPopup"}
+				{kind: "onyx.Button", classes: "button map-toolbar-zoom-button", content: "Options", ontap: "showPopup", popup: "optionsPopup", components: [
+					{kind: "onyx.Icon", classes: "icon", src: "assets/parametres.png"}
+				]}
 			]}
 		]},
 		{kind: "onyx.Popup", name: "optionsPopup", modal: true, floating: true, classes:"enyo-unselectable popup-light map-options-popup", components: [
@@ -101,8 +105,8 @@ enyo.kind({
 		var bounds = new L.LatLngBounds(new L.LatLng(43.634212, 3.860836), new L.LatLng(43.650733, 3.896198));
 		this.$.map.setMaxBounds(bounds);
 
-		this.drawZoo();
-		this.drawParcours();
+		//this.drawZoo();
+		//this.drawParcours();
 		// this.doLoaded();
 	},
 	showPopup: function(inSender, inEvent) {
@@ -144,9 +148,9 @@ enyo.kind({
 		this.$.poiPopup.setCentered(inSender.getValue());
 	},
 	drawMap: function() {
-		this.drawEnclos();
-		this.drawPointsDeVue();
-		this.drawPoi();
+		//this.drawEnclos();
+		//this.drawPointsDeVue();
+		//this.drawPoi();
 	},
 	drawZoo: function() {
 		var tab = new Array();
@@ -168,7 +172,7 @@ enyo.kind({
 		for (var i = 0; i < enyo.zoo.enclos.length; i++) {
 			var tab = new Array();
 			for (var j = 0; j < enyo.zoo.enclos[i].polygone.length; j++) {
-				tab.push(new L.LatLng(enyo.zoo.enclos[i].polygone[j].lat, enyo.zoo.enclos[i].polygone[j].long));
+				tab.push(new L.LatLng(enyo.zoo.enclos[i].polygone[j][0], enyo.zoo.enclos[i].polygone[j][1]));
 			}
 			var polygon = new L.Polygon(tab, {
 				fillColor: 'brown',
@@ -249,8 +253,8 @@ enyo.kind({
 
 		this.$.map.addLayer(this.poiGroup);
 		for (var i = 0; i < poi.length; i++) {
-			var marker = new L.Marker(new L.LatLng(poi[i].lat, poi[i].long), {
-				icon: type[poi[i].type].texte in icons ? icons[type[poi[i].type].texte] : icons["default"]
+			var marker = new L.Marker(new L.LatLng(poi[i].lat, poi[i].lon), {
+				icon: poi[i].type in icons ? icons[poi[i].type] : icons["default"]
 			});
 			this.poiGroup.addLayer(marker);
 			(function(panel, id) {

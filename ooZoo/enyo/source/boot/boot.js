@@ -1,3 +1,14 @@
+// Used when a certain platform restricts functionality due to security
+enyo.execUnsafeLocalFunction = function(e) {
+	// Querying {MSApp} object - Windows 8
+	if (typeof MSApp === "undefined") {
+		e();
+	}
+	else {
+		window.MSApp.execUnsafeLocalFunction(e);
+	}
+};
+
 // machine for a loader instance
 enyo.machine = {
 	sheet: function(inPath) {
@@ -23,30 +34,36 @@ enyo.machine = {
 			link.type = type;
 			document.getElementsByTagName('head')[0].appendChild(link);
 		} else {
-			document.write('<link href="' + inPath + '" media="screen" rel="' + rel + '" type="' + type + '" />');
+			link = function() {
+				/* jshint evil: true */
+				document.write('<link href="' + inPath + '" media="screen" rel="' + rel + '" type="' + type + '" />');
+			};
+			enyo.execUnsafeLocalFunction(link);
 		}
 		if (isLess && window.less) {
-			less.sheets.push(link);
+			window.less.sheets.push(link);
 			if (!enyo.loader.finishCallbacks.lessRefresh) {
 				enyo.loader.finishCallbacks.lessRefresh = function() {
-					less.refresh(true);
-				}
+					window.less.refresh(true);
+				};
 			}
 		}
 	},
 	script: function(inSrc, onLoad, onError) {
+		/* jshint evil: true */
 		if (!enyo.runtimeLoading) {
 			document.write('<scri' + 'pt src="' + inSrc + '"' + (onLoad ? ' onload="' + onLoad + '"' : '') + (onError ? ' onerror="' + onError + '"' : '') + '></scri' + 'pt>');
 		} else {
 			var script = document.createElement('script');
 			script.src = inSrc;
-			script.onLoad = onLoad;
-			script.onError = onError;
+			script.onload = onLoad;
+			script.onerror = onError;
 			document.getElementsByTagName('head')[0].appendChild(script);
 		}
 	},
 	inject: function(inCode) {
-		document.write('<script type="text/javascript">' + inCode + "</script>");
+		/* jshint evil: true */
+		document.write('<scri' + 'pt type="text/javascript">' + inCode + "</scri" + "pt>");
 	}
 };
 
@@ -81,7 +98,7 @@ enyo.depends = function() {
 			enyo.runtimeLoading = true;
 			runtimeLoad();
 		}
-	}
+	};
 	function runtimeLoad(onLoad) {
 		if (onLoad) {
 			onLoad(); // Run user callback function
@@ -91,15 +108,17 @@ enyo.depends = function() {
 			var depends = args[0];
 			var dependsArg = enyo.isArray(depends) ? depends : [depends];
 			var onLoadCallback = args[1];
-			enyo.loader.finishCallbacks.runtimeLoader = function() {
+			enyo.loader.finishCallbacks.runtimeLoader = function(inBlock) {
 				// Once loader is done loading a package, we chain a call to runtimeLoad(),
 				// which will call the onLoadCallback from the original load call, passing
 				// a reference to the depends argument from the original call for tracking,
 				// followed by kicking off any additionally queued load() calls
 				runtimeLoad(function() {
-					onLoadCallback && onLoadCallback(depends);
+					if (onLoadCallback) {
+						onLoadCallback(inBlock);
+					}
 				});
-			}
+			};
 			enyo.loader.packageFolder = "./";
 			// Kick off next queued call to loader
 			enyo.depends.apply(this, dependsArg);

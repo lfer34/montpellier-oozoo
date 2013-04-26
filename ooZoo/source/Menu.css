@@ -42,11 +42,11 @@
 
 .menu-group-menu > *
 {
-	margin: 5px;
+	margin: 0 5px;
 }
 
 .menu-group-button {
-	padding: 0 10px 0 10px;
+	padding: 0 10px;
 }
 
 .menu-group-button.onyx-button.active .icon {

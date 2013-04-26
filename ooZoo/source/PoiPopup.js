@@ -9,7 +9,7 @@
 enyo.kind({
 	name: "PoiPopup",
 	components: [
-		{kind: "onyx.Popup", name: "popup", modal: false, centered: false, floating: true, scrim: false, classes:"enyo-unselectable map-popup", components: [
+		{kind: "onyx.Popup", name: "popup", modal: true, centered: false, floating: true, scrim: false, classes:"enyo-unselectable map-popup", components: [
 			{classes: "popup-light", name: "container", components: [
 				{name: "title", content: "Poi"},
 				{kind: "Image", name: "image", src: "", showing: false},

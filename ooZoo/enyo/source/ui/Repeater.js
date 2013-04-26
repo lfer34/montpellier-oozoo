@@ -33,9 +33,9 @@ enyo.kind({
 	events: {
 		/**
 			Fires when each item is created.
-			
+
 			_inEvent.index_ contains the item's index.
-			
+
 			_inEvent.item_ contains the item control, for decoration.
 		*/
 		onSetupItem: ""
@@ -49,9 +49,6 @@ enyo.kind({
 		this.itemComponents = this.components || this.kindComponents;
 		this.components = this.kindComponents = null;
 		this.inherited(arguments);
-	},
-	setCount: function(inCount) {
-		this.setPropertyValue("count", inCount, "countChanged");
 	},
 	countChanged: function() {
 		this.build();
@@ -96,6 +93,11 @@ enyo.kind({
 	decorateEvent: function(inEventName, inEvent, inSender) {
 		if (inEvent) {
 			inEvent.index = this.index;
+			// update delegate during bubbling to account for proxy
+			// by moving the delegate up to the repeater level
+			if (inEvent.delegate && inEvent.delegate.owner === this) {
+				inEvent.delegate = this.owner;
+			}
 		}
 		this.inherited(arguments);
 	},

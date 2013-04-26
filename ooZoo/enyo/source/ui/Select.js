@@ -37,14 +37,14 @@ enyo.kind({
 	defaultKind: "enyo.Option",
 	rendered: function() {
 		this.inherited(arguments);
+		//Trick to force IE8 onchange event bubble
+		if(enyo.platform.ie == 8){
+			this.setAttribute("onchange", enyo.bubbler);
+		}
 		this.selectedChanged();
 	},
 	getSelected: function() {
 		return Number(this.getNodeProperty("selectedIndex", this.selected));
-	},
-	setSelected: function(inIndex) {
-		// default property mechanism can't track changed correctly for virtual properties
-		this.setPropertyValue("selected", Number(inIndex), "selectedChanged");
 	},
 	selectedChanged: function() {
 		this.setNodeProperty("selectedIndex", this.selected);

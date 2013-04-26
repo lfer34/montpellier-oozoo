@@ -7,9 +7,9 @@
 	we can use a job.
 
 		onscroll: function() {
-			// updateThumb will be called, but only when 1s has elapsed since the 
+			// updateThumb will be called, but only when 1s has elapsed since the
 			// last onscroll
-			enyo.job("updateThumb", enyo.bind(this, "updateThumb"), 1000);
+			enyo.job("updateThumb", this.bindSafely("updateThumb"), 1000);
 		}
 */
 enyo.job = function(inJobName, inJob, inWait) {

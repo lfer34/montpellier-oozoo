@@ -19,16 +19,14 @@ enyo.depends(
 	"PickerDecorator.js",
 	"PickerButton.js",
 	"Picker.js",
-	"FlyweightPicker.js",	
+	"FlyweightPicker.js",
 	"DatePicker.js",
-	"TimePicker.js",	
+	"TimePicker.js",
 	"RadioButton.js",
 	"RadioGroup.js",
 	"ToggleButton.js",
 	"ToggleIconButton.js",
 	"Toolbar.js",
-	"Tooltip.js",
-	"TooltipDecorator.js",
 	"ProgressBar.js",
 	"ProgressButton.js",
 	"Scrim.js",
@@ -36,5 +34,7 @@ enyo.depends(
 	"RangeSlider.js",
 	"Item.js",
 	"Spinner.js",
-	"MoreToolbar.js"
+	"MoreToolbar.js",
+	"IntegerPicker.js",
+	"ContextualPopup.js"
 );

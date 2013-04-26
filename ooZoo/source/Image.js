@@ -32,12 +32,11 @@ enyo.kind({
 		this.owner.$.cardPanels.setIndex(0);
 	},
 	updateImage: function(inAnimal) {
-		var zoo = enyo.zoo;
 		this.animal = inAnimal;
 
 		var tab = [];
-		for (var i = 0; i < inAnimal.image.length; i++) {
-			tab.push(enyo.zoo.param.image + inAnimal.image[i]);
+		for (var i = 0; i < inAnimal.images.length; i++) {
+			tab.push(enyo.zoo.imagefull + inAnimal.images[i]);
 		}
 		this.$.carousel.setImages(tab);
 		this.$.nom.setContent(inAnimal.nom);

@@ -77,37 +77,27 @@ enyo.kind({
 	updateCard: function(inAnimal) {
 		this.$.scroller.scrollToTop();
 		this.owner.$.map.clearEnclosStyle();
-		var zoo = this.owner.zoo;
 		this.animal = inAnimal;
 		this.$.nom.setContent(inAnimal.nom);
-		var categories = "";
-		for (var i = 0; i < inAnimal.categorie.length; i++) {
-			categories += i ? ", " : "";
-			categories += enyo.zoo.texte.categorie[inAnimal.categorie[i]].texte;
-		}
-		var zones = "";
-		for (var i = 0; i < inAnimal.zone.length; i++) {
-			zones += i ? ", " : "";
-			zones += enyo.zoo.texte.zone[inAnimal.zone[i]].texte;
-		}
-		if (inAnimal.image.length > 0) {
+		
+		if (inAnimal.images.length > 0) {
 			this.$.list.show();
 		}
 		else {
 			this.$.list.hide();
 		}
 
-		this.$.list.setCount(inAnimal.image.length);
+		this.$.list.setCount(inAnimal.images.length);
 		this.$.description.setContent(inAnimal.description);
 		this.$.sciName.setContent(inAnimal.nom_scientifique);
-		this.$.class.setContent(enyo.zoo.texte.classe[inAnimal.classe].texte);
-		this.$.category.setContent(categories);
-		this.$.ordre.setContent(enyo.zoo.texte.ordre[inAnimal.ordre].texte);
+		this.$.class.setContent(inAnimal.classe);
+		this.$.category.setContent(inAnimal.categories);
+		this.$.ordre.setContent(inAnimal.ordre);
 		this.$.longevite.setContent(inAnimal.longevite);
-		this.$.gestation.setContent(inAnimal.duree_gestation);
+		this.$.gestation.setContent(inAnimal.gestation.duree);
 		this.$.poids.setContent(inAnimal.poids);
-		this.$.zones.setContent(zones);
-		this.$.lieux.setContent(inAnimal.details);
+		this.$.zones.setContent(inAnimal.zones);
+		this.$.lieux.setContent(inAnimal.zones_detail);
 
 		this.owner.$.image.updateImage(inAnimal);
 	},
@@ -146,12 +136,12 @@ enyo.kind({
 	},
 	setupItem: function(inSender, inEvent) {
 		var i = inEvent.index;
-		var data = this.animal.image;
+		var data = this.animal.images;
 		var image = data[i];
 		var item = inEvent.item;
 
 		if (item) {
-			item.$.image.setSrc(enyo.zoo.param.image + image);
+			item.$.image.setSrc(enyo.zoo.imagefull + image);
 
 			return true;
 		}

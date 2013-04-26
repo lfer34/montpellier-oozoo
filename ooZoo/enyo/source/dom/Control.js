@@ -5,6 +5,9 @@
 	obviously controls, in Enyo, a control may become as complex as an entire
 	application.
 
+	If you make changes to _enyo.Control_, be sure to add or update the appropriate
+	[unit tests](https://github.com/enyojs/enyo/tree/master/tools/test/core/tests).
+
 	For more information, see the documentation on
 	<a href="https://github.com/enyojs/enyo/wiki/Creating-Controls">Controls</a>
 	in the Enyo Developer Guide.
@@ -29,7 +32,7 @@ enyo.kind({
 			plain text unless _allowHtml_ is true
 		*/
 		content: "",
-		//*	Boolean indicating whether the tag will be visible in the document
+		//* Boolean indicating whether the tag will be visible in the document
 		showing: true,
 		//* If false, HTML codes in _content_ are escaped before rendering
 		allowHtml: false,
@@ -49,9 +52,17 @@ enyo.kind({
 		//
 		// ad hoc properties:
 		//
-		//* Flag used by control layouts to determine which control will expand
-		//* to fill the available space
-		fit: false,
+		/**
+			Flag used by control layouts to determine which control will expand
+			to fill the available space. This only has meaning when the control
+			is being used as a child of a control with a version of FittableLayout
+			as its layoutKind.
+
+			TODO: We would like to be able to test for the existence of the fit
+			property without setting a default (of null) since it is a boolean
+			flag. This is a temporary fix.
+		*/
+		fit: null,
 		//* Used by Ares design editor for design objects
 		isContainer: false
 	},
@@ -59,6 +70,9 @@ enyo.kind({
 		//* Controls will call a user-provided _tap_ method when tapped upon.
 		ontap: "tap"
 	},
+	mixins: ["enyo.ControllerSupport"],
+	//*@protected
+	_is_view: true,
 	//* The default kind for controls created inside this control that don't
 	//* specify their own kind
 	defaultKind: "Control",
@@ -108,6 +122,15 @@ enyo.kind({
 			}
 		}
 	},
+	//*@protected
+	dispatchEvent: function (inEventName, inEvent, inSender) {
+		// prevent dispatch and bubble of events that are strictly internal (e.g. enter/leave)
+		if (this.strictlyInternalEvents[inEventName] && this.isInternalEvent(inEvent)) {
+			return true;
+		}
+
+		return this.inherited(arguments);
+	},
 	classesChanged: function(inOld) {
 		this.removeClass(inOld);
 		this.addClass(this.classes);
@@ -131,13 +154,6 @@ enyo.kind({
 	},
 	// event filter
 	strictlyInternalEvents: {onenter: 1, onleave: 1},
-	dispatchEvent: function(inEventName, inEvent, inSender) {
-		// prevent dispatch and bubble of events that are strictly internal (e.g. enter/leave)
-		if (this.strictlyInternalEvents[inEventName] && this.isInternalEvent(inEvent)) {
-			return true;
-		}
-		return this.inherited(arguments);
-	},
 	isInternalEvent: function(inEvent) {
 		var rdt = enyo.dispatcher.findDispatchTarget(inEvent.relatedTarget);
 		return rdt && rdt.isDescendantOf(this);
@@ -147,17 +163,17 @@ enyo.kind({
 	/**
 		Returns the DOM node representing the control.
 		If the control is not currently rendered, returns null.
-		
-		If hasNode() returns a value, the _node_ property will be valid and 
+
+		If hasNode() returns a value, the _node_ property will be valid and
 		can be checked directly.
-		
-		Once hasNode() is called, the returned value is made available in 
+
+		Once hasNode() is called, the returned value is made available in
 		the _node_ property of this control.
 
 		A control will only return a node if it has been rendered.
 
 			if (this.hasNode()) {
-				console.log(this.node.nodeType);
+				enyo.log(this.node.nodeType);
 			}
 	*/
 	hasNode: function() {
@@ -169,7 +185,7 @@ enyo.kind({
 		control.
 	*/
 	addContent: function(inAddendum) {
-		this.setContent(this.content + inAddendum);
+		this.setContent(this.get("content") + inAddendum);
 	},
 	/**
 		Gets the value of an attribute on this object.
@@ -229,7 +245,7 @@ enyo.kind({
 		}
 	},
 	/**
-		Convenience function for setting the _class_ attribute. 
+		Convenience function for setting the _class_ attribute.
 		The _class_ attribute represents the CSS classes assigned to this object;
 		it is a string that can contain multiple CSS classes separated by spaces.
 
@@ -239,7 +255,7 @@ enyo.kind({
 		this.setAttribute("class", inClass);
 	},
 	/**
-		Convenience function for getting the _class_ attribute. 
+		Convenience function for getting the _class_ attribute.
 		The _class_ attribute represents the CSS classes assigned to this object;
 		it is a string that can contain multiple CSS classes separated by spaces.
 
@@ -278,7 +294,7 @@ enyo.kind({
 		Removes substring _inClass_ from the _class_ attribute of this object.
 
 		_inClass_ must have no leading or trailing spaces.
-		
+
 		Using a compound class name is supported, but the name is treated
 		atomically. For example, given _"a b c"_, _removeClass("a b")_ will
 		produce _"c"_, but _removeClass("a c")_ will produce _"a b c"_.
@@ -321,9 +337,9 @@ enyo.kind({
 		// We may need a 'runtimeStyles' concept separate from a 'userStyles' concept, although
 		// it's not clear what API calls like 'applyStyle' would affect, and which concept would take
 		// precedence when there is a conflict.
-		// Perhaps we can separate 'style' completely from 'domStyles'. API methods like applyStyle 
+		// Perhaps we can separate 'style' completely from 'domStyles'. API methods like applyStyle
 		// would affect domStyles, and the two style databases would be combined at render-time.
-		// Alternatively, we can disallow changing "style" string at runtime and allow it to be set 
+		// Alternatively, we can disallow changing "style" string at runtime and allow it to be set
 		// at init-time only (as it was in pre-ares enyo).
 		//this.domStyles = {};
 		//this.addStyles(this.kindStyle);
@@ -359,9 +375,9 @@ enyo.kind({
 	/**
 		Returns the computed value of a CSS style named from _inStyle_
 		for the DOM node of the control. If the node hasn't been generated,
-		returns _inDefault_ as a default value. This uses JavaScript-style
-		property names, not CSS-style names, so use "fontFamily" instead of
-		"font-family".
+		returns _inDefault_ as a default value. This uses CSS-style property
+		names, not JavaScript-style names, so use "font-family" instead of
+		"fontFamily".
 	*/
 	getComputedStyleValue: function(inStyle, inDefault) {
 		if (this.hasNode()) {
@@ -387,10 +403,13 @@ enyo.kind({
 		the css rule -webkit-overflow-scrolling: touch, as it is
 		not supported in Android and leads to overflow issues
 		(ENYO-900 and ENYO-901)
+		Similarly, BB10 has issues repainting out-of-viewport content
+		when -webkit-overflow-scrolling is used (ENYO-1396)
 	*/
 	setupOverflowScrolling: function() {
-		if(enyo.platform.android || enyo.platform.androidChrome)
+		if(enyo.platform.android || enyo.platform.androidChrome || enyo.platform.blackberry) {
 			return;
+		}
 		document.getElementsByTagName("body")[0].className += " webkitOverflowScrolling";
 	},
 	//
@@ -414,7 +433,9 @@ enyo.kind({
 		}
 		if (this.hasNode()) {
 			this.renderDom();
-			this.rendered();
+			if (this.generated) {
+				this.rendered();
+			}
 		}
 		// return 'this' to support method chaining
 		return this;
@@ -429,17 +450,23 @@ enyo.kind({
 		this.teardownRender();
 		// inParentNode can be a string id or a node reference
 		var pn = enyo.dom.byId(inParentNode);
-		if (pn == document.body) {
+		var noFit = enyo.exists(this.fit) && this.fit === false;
+		//console.log(noFit);
+		if (pn == document.body && !noFit) {
 			this.setupBodyFitting();
 		} else if (this.fit) {
 			this.addClass("enyo-fit enyo-clip");
 		}
+		// for IE10 support, we want full support over touch actions in Enyo-rendered areas
+		this.addClass("enyo-no-touch-action");
 		// add css to enable hw-accelerated scrolling on non-Android platforms (ENYO-900, ENYO-901)
 		this.setupOverflowScrolling();
 		// generate our HTML
-		pn.innerHTML = this.generateHtml();
+		enyo.dom.setInnerHtml(pn, this.generateHtml());
 		// post-rendering tasks
-		this.rendered();
+		if (this.generated) {
+			this.rendered();
+		}
 		// support method chaining
 		return this;
 	},
@@ -449,19 +476,24 @@ enyo.kind({
 		to have it expand to fill its container.
 
 		Note that this has all the limitations that _document.write_ has.
-		It only works while the page is loading, so you can't call this	from an
+		It only works while the page is loading, so you can't call this from an
 		event handler. Also, it will not work in certain environments, such as
 		Chrome Packaged Apps or Windows 8.
 	*/
 	write: function() {
+		/* jshint evil:true */
 		if (this.fit) {
 			this.setupBodyFitting();
 		}
+		// for IE10 support, we want full support over touch actions in Enyo-rendered areas
+		this.addClass("enyo-no-touch-action");
 		// add css to enable hw-accelerated scrolling on non-Android platforms (ENYO-900, ENYO-901)
 		this.setupOverflowScrolling();
 		document.write(this.generateHtml());
 		// post-rendering tasks
-		this.rendered();
+		if (this.generated) {
+			this.rendered();
+		}
 		// support method chaining
 		return this;
 	},
@@ -478,7 +510,9 @@ enyo.kind({
 		// post-render layout work *and* post-resize layout work.
 		this.reflow();
 		for (var i=0, c; (c=this.children[i]); i++) {
-			c.rendered(); 
+			if (c.generated) {
+				c.rendered();
+			}
 		}
 	},
 	/**
@@ -493,19 +527,40 @@ enyo.kind({
 	hide: function() {
 		this.setShowing(false);
 	},
+	//* Sets focus to this control.
+	focus: function() {
+		if (this.hasNode()) {
+			this.node.focus();
+		}
+	},
+	//* Blurs this control.
+	blur: function() {
+		if (this.hasNode()) {
+			this.node.blur();
+		}
+	},
+	//* Returns true if the control is focused.
+	hasFocus: function() {
+		if (this.hasNode()) {
+			return document.activeElement === this.node;
+		}
+	},
 	/**
 		Returns an object describing the geometry of this object, like so:
 
 			{left: _offsetLeft_, top: _offsetTop_, width: _offsetWidth_, height: _offsetHeight_}
 
 		Values returned are only valid if _hasNode()_ is truthy.
+		If there's no DOM node for the object, this returns a bounds structure with
+		_undefined_ as the value of all fields.
 
 			var bounds = this.getBounds();
-			console.log(bounds.width);
+			enyo.log(bounds.width);
 	*/
 	getBounds: function() {
-		var n = this.node || this.hasNode() || 0;
-		return {left: n.offsetLeft, top: n.offsetTop, width: n.offsetWidth, height: n.offsetHeight};
+		var n = this.node || this.hasNode();
+		var b = enyo.dom.getBounds(n);
+		return b || {left: undefined, top: undefined, width: undefined, height: undefined};
 	},
 	/**
 		Sets any or all of the geometry style properties _width_, _height_,
@@ -528,6 +583,28 @@ enyo.kind({
 			}
 		}
 		this.domStylesChanged();
+	},
+	getAbsoluteBounds: function() {
+		var l = 0,
+			t = 0,
+			n = this.hasNode(),
+			w = n ? n.offsetWidth : 0,
+			h = n ? n.offsetHeight : 0;
+
+		while(n) {
+			l += n.offsetLeft - (n.offsetParent ? n.offsetParent.scrollLeft : 0);
+			t += n.offsetTop  - (n.offsetParent ? n.offsetParent.scrollTop	: 0);
+			n = n.offsetParent;
+		}
+
+		return {
+			top		: t,
+			left	: l,
+			bottom	: document.body.offsetHeight - t - h,
+			right   : document.body.offsetWidth  - l - w,
+			height	: h,
+			width	: w
+		};
 	},
 	//* @protected
 	// expensive, other methods do work to avoid calling here
@@ -552,6 +629,9 @@ enyo.kind({
 		return this.getAttribute("src");
 	},
 	srcChanged: function() {
+		if (!this.src) {
+			return;
+		}
 		this.setAttribute("src", enyo.path.rewrite(this.src));
 	},
 	attributesChanged: function() {
@@ -575,7 +655,7 @@ enyo.kind({
 		// but that has not actually happened at this point.
 		// We set 'generated = true' here anyway to avoid having to walk the
 		// control tree a second time (to set it later).
-		// The contract is that insertion in DOM will happen synchronously 
+		// The contract is that insertion in DOM will happen synchronously
 		// to generateHtml() and before anybody should be calling hasNode().
 		this.generated = true;
 		return h;
@@ -587,14 +667,14 @@ enyo.kind({
 		if (this.children.length) {
 			return this.generateChildHtml();
 		} else {
-			return this.allowHtml ? this.content : enyo.Control.escapeHtml(this.content);
+			return this.allowHtml ? this.get("content") : enyo.Control.escapeHtml(this.get("content"));
 		}
 	},
 	generateChildHtml: function() {
 		var results = '';
 		for (var i=0, c; (c=this.children[i]); i++) {
 			var h = c.generateHtml();
-			results += h; 
+			results += h;
 		}
 		return results;
 	},
@@ -691,7 +771,7 @@ enyo.kind({
 		if (this.generated) {
 			this.teardownChildren();
 		}
-		this.node.innerHTML = this.generateInnerHtml();
+		enyo.dom.setInnerHtml(this.node, this.generateInnerHtml());
 	},
 	renderStyles: function() {
 		if (this.hasNode()) {
@@ -734,7 +814,22 @@ enyo.kind({
 		// 'showing' specifically means domStyles.display !== 'none'.
 		// 'showing' does not imply the node is actually visible or even rendered in DOM,
 		// it simply reflects this state of this specific property as a convenience.
-		return this.showing = (this.domStyles.display != "none");
+		this.showing = (this.domStyles.display != "none");
+		return this.showing;
+	},
+	//* Return true if this and all parents are showing
+	getAbsoluteShowing: function() {
+		var b = this.getBounds();
+
+		if(this.getShowing() === false || (b.height === 0 && b.width === 0)) {
+			return false;
+		}
+
+		if(this.parent && this.parent.getAbsoluteShowing) {
+			return this.parent.getAbsoluteShowing();
+		} else {
+			return true;
+		}
 	},
 	//
 	//
@@ -748,7 +843,7 @@ enyo.kind({
 			Returns passed-in string with ampersand, less-than, and greater-than
 			characters replaced by HTML entities, e.g.,
 			'&lt;code&gt;"This &amp; That"&lt;/code&gt;' becomes
-			'&amp;lt;code&amp;gt;"This &amp;amp; That"&amp;lt;/code&amp;gt;' 
+			'&amp;lt;code&amp;gt;"This &amp;amp; That"&amp;lt;/code&amp;gt;'
 		*/
 		escapeHtml: function(inText) {
 			return inText != null ? String(inText).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') : '';
@@ -784,7 +879,7 @@ enyo.kind({
 			for (n in inStyleHash) {
 				v = inStyleHash[n];
 				if ((v !== null) && (v !== undefined) && (v !== "")) {
-					text +=  n + ':' + v + ';';
+					text += n + ':' + v + ';';
 				}
 			}
 			return text;
@@ -796,7 +891,7 @@ enyo.kind({
 		/**
 			Returns passed-in string with ampersand and double quote characters
 			replaced by HTML entities, e.g., 'hello from "Me & She"' becomes
-			'hello from &amp;quot;Me &amp;amp; She&amp;quot;' 
+			'hello from &amp;quot;Me &amp;amp; She&amp;quot;'
 		*/
 		escapeAttribute: function(inText) {
 			return !enyo.isString(inText) ? inText : String(inText).replace(/&/g,'&amp;').replace(/\"/g,'&quot;');
@@ -824,8 +919,8 @@ enyo.Control.subclass = function(ctor, props) {
 	// at kind declaration time, in the interest of efficiency
 	// and ease of use.
 	//
-	// However, the properties are no longer 'live' in prototypes 
-	// because of this magic--i.e., changes to the prototype of 
+	// However, the properties are no longer 'live' in prototypes
+	// because of this magic--i.e., changes to the prototype of
 	// a Control subclass will not necessarily be reflected in
 	// instances of that control (e.g., chained prototypes).
 	//
@@ -834,7 +929,7 @@ enyo.Control.subclass = function(ctor, props) {
 	//
 	var proto = ctor.prototype;
 	//
-	// 'kindClasses' comes either from our inheritance chain (e.g., proto's prototype chain) 
+	// 'kindClasses' comes either from our inheritance chain (e.g., proto's prototype chain)
 	// or has been forced by a kind declaration.
 	//
 	if (proto.classes) {
@@ -853,3 +948,9 @@ enyo.Control.subclass = function(ctor, props) {
 		proto.attributes = null;
 	}
 };
+
+//*@public
+/**
+	Also usable as _enyo.View_.
+*/
+enyo.View = enyo.Control;

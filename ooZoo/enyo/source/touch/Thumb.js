@@ -83,7 +83,7 @@ enyo.kind({
 			}
 		}
 	},
-	// implement set because showing is not changed while 
+	// implement set because showing is not changed while
 	// we delayHide but we want to cancel the hide.
 	setShowing: function(inShowing) {
 		if (inShowing && inShowing != this.showing) {
@@ -102,7 +102,7 @@ enyo.kind({
 	},
 	delayHide: function(inDelay) {
 		if (this.showing) {
-			enyo.job(this.id + "hide", enyo.bind(this, "hide"), inDelay || 0);
+			enyo.job(this.id + "hide", this.bindSafely("hide"), inDelay || 0);
 		}
 	},
 	cancelDelayHide: function() {

@@ -14,10 +14,12 @@ enyo.kind({
 	},
 	components: [
 		{kind: "Signals", ondeviceready: "deviceReady"},
-		{kind: "WebService", name:"data", url: "http://zoo.cyrilmoral.es/data.asp", onResponse: "dataResponse", onError: "dataError"},
+		{kind: "WebService", name:"wsAnimaux", url: "http://cyrilmoral.es/animaux.php", onResponse: "animauxResponse", onError: "wsAnimauxError"},
+		{kind: "WebService", name:"wsEnclos", url: "http://cyrilmoral.es/enclos.php", onResponse: "enclosResponse", onError: "wsEnclosError"},
+		{kind: "WebService", name:"wsPoi", url: "http://cyrilmoral.es/poi.php", onResponse: "poiResponse", onError: "wsPoiError"},
 		{kind: "FittableRows", classes: "enyo-fit", components: [
 			{kind: "Panels", name: "mainPanels", classes: "panels enyo-fit", fit: true, realtimeFit: false, arrangerKind: "CollapsingArranger", onTransitionFinish:"updateMap", components: [
-				{kind: "MenuPanel", name: "menu", classes: "menu-panel"},
+				{kind: "MenuPanel", name: "menu"},
 				{kind: "Panels", name: "contentPanels", classes: "panels enyo-fit", arrangerKind: "CardArranger", draggable: false, components: [
 					{kind: "MapPanel", name: "map", onLoaded: "mapLoaded"},
 					{kind: "Panels", name: "cardPanels", classes: "panels enyo-fit", arrangerKind: "CardArranger", draggable: false, components: [
@@ -35,9 +37,6 @@ enyo.kind({
 		this.inherited(arguments);
 
 		enyo.zoo = new Object();
-		enyo.zoo["param"] = {
-			"image": "http://www.palmsnipe.cat/wp7/img/large/"
-		};
 	},
 	rendered: function() {
 		this.inherited(arguments);
@@ -56,6 +55,7 @@ enyo.kind({
 	},
 	mapLoaded: function() {
 		this.map = true;
+		this.$.map.drawZoo();
 
 		if (enyo.ville) {
 			// Gestion du multitouch sur les ecrans de la ville
@@ -78,152 +78,55 @@ enyo.kind({
 			// enyo.$.addStyles('cursor: url("assets/blank.png"), default !important;');
 		}
 
-		this.$.data.send();
+		this.$.wsAnimaux.send();
+		this.$.wsEnclos.send();
+		this.$.wsPoi.send();
 	},
-	dataResponse: function(inRequest, inResponse) {
-		// this.zoo = inResponse.data;
-		this.createData(inResponse.data);
-		this.$.map.drawMap();
+	animauxResponse: function(inRequest, inResponse) {
+		enyo.zoo["animaux"] = inResponse.data.reponse.animaux;
+		enyo.zoo["imagefull"] = inResponse.data.reponse.path_image_full;
+
+		localStorage.setItem("animaux", JSON.stringify(inResponse.data.reponse.animaux));
+		localStorage.setItem("imagefull", JSON.stringify(inResponse.data.reponse.path_image_full));
+
 		this.$.menu.setAnimalList();
 	},
-	createData: function(inData) {
-		this.zoo = new Object();
-		
-		function createEnclos(data) {
-			var enclos = [];
-			var tmp = [];
-			for (var i = 0; i < data.length; i++) {
-				var tmp = data[i].polygone.replace(/\], \[/gi, ",").replace(/, /gi, " ").replace(/[\]\[]/gi, "").split(",");
-				var tab = [];
-				for (pt in tmp) {
-					var point = tmp[pt].split(' ');
-					tab.push({lat: parseFloat(point[0]), long: parseFloat(point[1])});
-				}
-				enclos.push({
-					"id": data[i].id,
-					"numero": data[i].num,
-					"polygone": tab});
-			}
-			return enclos;
-		}
-		function createAnimaux(inData) {
-			var animal = [];
-			for (var i = 0; i < inData.animal.length; i++) {
-				var categorie = [];
-				for (var j = 0; j < inData.categorie.length; j++) {
-					if (inData.categorie[j].id_animal == inData.animal[i].id) {
-						categorie.push(inData.categorie[j].id_categorie);
-					}
-				}
-				var enclos = [];
-				for (var j = 0; j < inData.enclos.length; j++) {
-					if (inData.enclos[j].id_animal == inData.animal[i].id) {
-						enclos.push(inData.enclos[j].id_enclos);
-					}
-				}
-				var image = [];
-				for (var j = 0; j < inData.image.length; j++) {
-					if (inData.image[j].id_animal == inData.animal[i].id) {
-						image.push(inData.image[j].fichier);
-					}
-				}
-				var zone = [];
-				for (var j = 0; j < inData.zone.length; j++) {
-					if (inData.zone[j].id_animal == inData.animal[i].id) {
-						zone.push(inData.zone[j].id_zone);
-					}
-				}
-				animal.push({
-					"id": inData.animal[i].id,
-					"classe": inData.animal[i].classe,
-					"description": inData.animal[i].description,
-					"details": inData.animal[i].details_zone,
-					"duree_gestation": inData.animal[i].duree_gestation,
-					"famille": inData.animal[i].famille,
-					"longevite": inData.animal[i].longevite,
-					"nb_gestation": inData.animal[i].nb_gestation,
-					"nom": inData.animal[i].nom,
-					"nom_scientifique": inData.animal[i].nom_scientifique,
-					"ordre": inData.animal[i].ordre,
-					"poids": inData.animal[i].poids,
-					"categorie": categorie,
-					"enclos": enclos,
-					"image": image,
-					"zone": zone
-					});
-			}
-			return animal;
-		}
-		function createPoi(inData) {
-			var data = new Object();
-			for (var i = 0; i < inData.length; i++) {
-				data[inData[i].id] = {
-					"Lat": inData[i].Lat,
-					"Long": inData[i].Long,
-					"nom": inData[i].nom,
-					"texte": inData[i].texte,
-					"type": inData[i].type};
-			}
-			return data;
-		}
-		function createTexte(inData) {
-			var categorie = new Object();
-			var classe = new Object();
-			var famille = new Object();
-			var ordre = new Object();
-			var poi = new Object();
-			var zone = new Object();
-			for (var i = 0; i < inData.categorie.length; i++) {
-				categorie[inData.categorie[i].id] = {
-					"texte": inData.categorie[i].texte};
-			}
-			for (var i = 0; i < inData.classe.length; i++) {
-				classe[inData.classe[i].id] = {
-					"texte": inData.classe[i].texte};
-			}
-			for (var i = 0; i < inData.famille.length; i++) {
-				famille[inData.famille[i].id] = {
-					"texte": inData.famille[i].texte};
-			}
-			for (var i = 0; i < inData.ordre.length; i++) {
-				ordre[inData.ordre[i].id] = {
-					"texte": inData.ordre[i].texte};
-			}
-			for (var i = 0; i < inData.poi.length; i++) {
-				poi[inData.poi[i].id] = {
-					"texte": inData.poi[i].texte};
-			}
-			for (var i = 0; i < inData.zone.length; i++) {
-				zone[inData.zone[i].id] = {
-					"texte": inData.zone[i].texte};
-			}
-			
-			var data = {
-				"categorie": categorie,
-				"classe": classe,
-				"famille": famille,
-				"ordre": ordre,
-				"poi": poi,
-				"zone": zone
-				};
-			return data;
-		}
-		
-		var enclos = createEnclos(inData.zoo.enclos);
-		var enclosVue = inData.zoo.enclos_vue;
-		var animaux = createAnimaux(inData.zoo.animaux);
-		// var poi = createPoi(inData.zoo.poi);
-		var poi = inData.zoo.poi;
-		var texte = createTexte(inData.zoo.texte);
-			
-		enyo.zoo["animaux"] = animaux;
-		enyo.zoo["enclos"] = enclos;
-		enyo.zoo["enclos_vue"] = enclosVue;
-		enyo.zoo["poi"] = poi;
-		enyo.zoo["texte"] = texte;
+	enclosResponse: function(inRequest, inResponse) {
+		enyo.zoo["enclos"] = inResponse.data.reponse;
+		localStorage.setItem("enclos", JSON.stringify(inResponse.data.reponse));
+		this.$.map.drawEnclos();
 	},
-	dataError: function(inSender, inData) {
-		// console.log(inData);
-		this.$.errorPopup.show();
+	poiResponse: function(inRequest, inResponse) {
+		enyo.zoo["poi"] = inResponse.data.reponse;
+		localStorage.setItem("poi", JSON.stringify(inResponse.data.reponse));
+		this.$.map.drawPoi();
+	},
+	wsPoiError: function(inSender, inData) {
+		enyo.zoo["poi"] = JSON.parse(localStorage.getItem("poi"));
+		if (enyo.zoo["poi"] !== null) {
+			this.$.map.drawPoi();
+		}
+		else {
+			this.$.errorPopup.show();
+		}
+	},
+	wsAnimauxError: function(inSender, inData) {
+		enyo.zoo["animaux"] = JSON.parse(localStorage.getItem("animaux"));
+		enyo.zoo["imagefull"] = JSON.parse(localStorage.getItem("imagefull"));
+		if (enyo.zoo["animaux"] !== null && enyo.zoo["imagefull"] != null) {
+			this.$.menu.setAnimalList();
+		}
+		else {
+			this.$.errorPopup.show();
+		}
+	},
+	wsEnclosError: function(inSender, inData) {
+		enyo.zoo["enclos"] = JSON.parse(localStorage.getItem("enclos"));
+		if (enyo.zoo["enclos"] !== null) {
+			this.$.map.drawEnclos();
+		}
+		else {
+			this.$.errorPopup.show();
+		}
 	}
 });

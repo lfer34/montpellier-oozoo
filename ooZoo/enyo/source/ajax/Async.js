@@ -39,7 +39,7 @@ enyo.kind({
 	/**
 		Registers a response function.
 		First parameter is an optional _this_ context for the response method.
-		Second (or only) parameter is the function object. 
+		Second (or only) parameter is the function object.
 	*/
 	response: function(/* [inContext], inResponder */) {
 		this.accumulate(this.responders, arguments);
@@ -48,7 +48,7 @@ enyo.kind({
 	/**
 		Registers an error handler.
 		First parameter is an optional _this_ context for the response method.
-		Second (or only) parameter is the function object. 
+		Second (or only) parameter is the function object.
 	*/
 	error: function(/* [inContext], inResponder */) {
 		this.accumulate(this.errorHandlers, arguments);
@@ -56,11 +56,11 @@ enyo.kind({
 	},
 	//* @protected
 	route: function(inAsync, inValue) {
-		var r = enyo.bind(this, "respond");
+		var r = this.bindSafely("respond");
 		inAsync.response(function(inSender, inValue) {
 			r(inValue);
 		});
-		var f = enyo.bind(this, "fail");
+		var f = this.bindSafely("fail");
 		inAsync.error(function(inSender, inValue) {
 			f(inValue);
 		});
@@ -84,7 +84,7 @@ enyo.kind({
 	startTimer: function() {
 		this.startTime = enyo.now();
 		if (this.timeout) {
-			this.timeoutJob = setTimeout(enyo.bind(this, "timeoutComplete"), this.timeout);
+			this.timeoutJob = setTimeout(this.bindSafely("timeoutComplete"), this.timeout);
 		}
 	},
 	endTimer: function() {

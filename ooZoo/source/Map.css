@@ -22,13 +22,18 @@
 	padding: 0px;
 }
 
+.map-toolbar-group-button
+{
+	margin: 0 !important;
+}
+
 .map-toolbar-group-button > *
 {
-	margin: 5px;
+	margin: 0 5px;
 }
 
 .map-toolbar-zoom-button {
-	padding: 0 10px 0 10px;
+	padding: 0 10px;
 }
 
 .map-toolbar-zoom-button:active:hover .icon {

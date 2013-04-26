@@ -51,7 +51,7 @@ enyo.kind({
 		this.parent.$.centeredCheckbox.setDisabled(false);
 	},
 	setPopup: function(zoo, id) {
-		this.$.title.setContent("Enclos " + enyo.zoo.enclos[id].numero);
+		this.$.title.setContent("Enclos " + enyo.zoo.enclos[id].num);
 		this.animals = this.getAnimals(enyo.zoo.animaux, enyo.zoo.enclos[id].id);
 		this.sortAnimals();
 		this.$.list.setCount(this.animals.length);
@@ -80,14 +80,9 @@ enyo.kind({
 
 		if (item) {
 			item.$.name.setContent(animal.nom);
-			var zones = "";
-			for (var i = 0; i < animal.zone.length; i++) {
-				zones += i ? " / " : "";
-				zones += enyo.zoo.texte.zone[animal.zone[i]].texte;
-			}
-			item.$.region.setContent(zones);
-			if (animal.image.length > 0) {
-				item.$.icon.setSrc(enyo.zoo.param.image + animal.image[0]);
+			item.$.region.setContent(animal.zones);
+			if (animal.images.length > 0) {
+				item.$.icon.setSrc(enyo.zoo.imagefull + animal.images[0]);
 			}
 			else {
 				item.$.icon.setSrc("assets/logo2.png");
