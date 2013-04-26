@@ -14,9 +14,9 @@ enyo.kind({
 	},
 	components: [
 		{kind: "Signals", ondeviceready: "deviceReady"},
-		{kind: "WebService", name:"wsAnimaux", url: "http://cyrilmoral.es/animaux.php", onResponse: "animauxResponse", onError: "wsAnimauxError"},
-		{kind: "WebService", name:"wsEnclos", url: "http://cyrilmoral.es/enclos.php", onResponse: "enclosResponse", onError: "wsEnclosError"},
-		{kind: "WebService", name:"wsPoi", url: "http://cyrilmoral.es/poi.php", onResponse: "poiResponse", onError: "wsPoiError"},
+		{kind: "WebService", name:"wsAnimaux", url: "http://zoo.cyrilmoral.es/animaux.php", onResponse: "animauxResponse", onError: "wsAnimauxError"},
+		{kind: "WebService", name:"wsEnclos", url: "http://zoo.cyrilmoral.es/enclos.php", onResponse: "enclosResponse", onError: "wsEnclosError"},
+		{kind: "WebService", name:"wsPoi", url: "http://zoo.cyrilmoral.es/poi.php", onResponse: "poiResponse", onError: "wsPoiError"},
 		{kind: "FittableRows", classes: "enyo-fit", components: [
 			{kind: "Panels", name: "mainPanels", classes: "panels enyo-fit", fit: true, realtimeFit: false, arrangerKind: "CollapsingArranger", onTransitionFinish:"updateMap", components: [
 				{kind: "MenuPanel", name: "menu"},

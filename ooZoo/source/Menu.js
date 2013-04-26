@@ -13,8 +13,8 @@ enyo.kind({
 		onLoaded: ""
 	},
 	components: [
-		{kind: "WebService", name:"wsTexte", url: "http://cyrilmoral.es/texte.php", onResponse: "texteResponse", onError: "texteError"},
-		{kind: "WebService", name:"site", url: "http://cyrilmoral.es/sitezoomtp.php", handleAs: "text", onResponse: "siteResponse", onError: "siteError"},
+		{kind: "WebService", name:"wsTexte", url: "http://zoo.cyrilmoral.es/texte.php", onResponse: "texteResponse", onError: "texteError"},
+		{kind: "WebService", name:"site", url: "http://zoo.cyrilmoral.es/sitezoomtp.php", handleAs: "text", onResponse: "siteResponse", onError: "siteError"},
 		{kind: "FittableRows", classes: "enyo-fit", components: [
 			{kind: "onyx.Toolbar", classes: "menu-header", components: [
 				{kind: "Image", src: "assets/logo.png", classes: "menu-header-logo"}
