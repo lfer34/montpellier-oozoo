@@ -1,19 +1,18 @@
 /**
-The _enyo.Panels_ kind is designed to satisfy a variety of common use cases for
-application layout. Using _enyo.Panels_, controls may be arranged as (among
-other things) a carousel, a set of collapsing panels, a card stack that fades
-between panels, or a grid.
+The _enyo.Panels_ kind is designed to satisfy a variety of common use cases
+for application layout. Using _enyo.Panels_, controls may be arranged as
+(among other things) a carousel, a set of collapsing panels, a card stack
+that fades between panels, or a grid.
 
 Any Enyo control may be placed inside an _enyo.Panels_, but by convention we
-refer to each of these controls as a "panel." From the set of panels in an
-_enyo.Panels_, one is considered to be active. The active panel is set by index
-using the _setIndex_ method. The actual layout of the panels typically changes
-each time the active panel is set, such that the new active panel has the most
-prominent position.
+refer to each of these controls as a "panel". From the set of panels in an
+_enyo.Panels_, one is considered to be active. The active panel is set by
+index using the _setIndex()_ method. The actual layout of the panels
+typically changes each time the active panel is set, such that the new
+active panel has the most prominent position.
 
-For more information, see the
-[Panels documentation](https://github.com/enyojs/enyo/wiki/Panels) in the Enyo
-Developer Guide.
+For more information, see the documentation on
+[Panels](building-apps/layout/panels.html) in the Enyo Developer Guide.
 */
 enyo.kind({
 	name: "enyo.Panels",
@@ -72,17 +71,21 @@ enyo.kind({
 		{kind: "Animator", onStep: "step", onEnd: "completed"}
 	],
 	fraction: 0,
-	create: function() {
-		this.transitionPoints = [];
-		this.inherited(arguments);
-		this.arrangerKindChanged();
-		this.narrowFitChanged();
-		this.indexChanged();
-	},
-	rendered: function() {
-		this.inherited(arguments);
-		enyo.makeBubble(this, "scroll");
-	},
+	create: enyo.inherit(function(sup) {
+		return function() {
+			this.transitionPoints = [];
+			sup.apply(this, arguments);
+			this.arrangerKindChanged();
+			this.narrowFitChanged();
+			this.indexChanged();
+		};
+	}),
+	rendered: enyo.inherit(function(sup) {
+		return function() {
+			sup.apply(this, arguments);
+			enyo.makeBubble(this, "scroll");
+		};
+	}),
 	domScroll: function(inSender, inEvent) {
 		if (this.hasNode()) {
 			if (this.node.scrollLeft > 0) {
@@ -91,55 +94,66 @@ enyo.kind({
 			}
 		}
 	},
-	initComponents: function() {
-		this.createChrome(this.tools);
-		this.inherited(arguments);
-	},
+	initComponents: enyo.inherit(function(sup) {
+		return function() {
+			this.createChrome(this.tools);
+			sup.apply(this, arguments);
+		};
+	}),
 	arrangerKindChanged: function() {
 		this.setLayoutKind(this.arrangerKind);
 	},
 	narrowFitChanged: function() {
-		this.addRemoveClass("enyo-panels-fit-narrow", this.narrowFit);
+		this.addRemoveClass("enyo-panels-fit-narrow", this.narrowFit && enyo.Panels.isScreenNarrow());
 	},
-	destroy: function() {
-		// When the entire panels is going away, take note so we don't try and do single-panel
-		// remove logic such as changing the index and reflowing when each panel is destroyed
-		this.destroying = true;
-		this.inherited(arguments);
-	},
-	removeControl: function(inControl) {
-		// Skip extra work during panel destruction.
-		if (this.destroying) {
-			return this.inherited(arguments);
-		}
-		// adjust index if the current panel is being removed
-		// so it's either the previous panel or the first one.
-		var newIndex = -1;
-		var controlIndex = enyo.indexOf(inControl, this.controls);
-		if (controlIndex === this.index) {
-			newIndex = Math.max(controlIndex - 1, 0);
-		}
-		this.inherited(arguments);
-		if (newIndex !== -1 && this.controls.length > 0) {
-			this.setIndex(newIndex);
-			this.flow();
-			this.reflow();
-		}
-	},
+	destroy: enyo.inherit(function(sup) {
+		return function() {
+			// When the entire panels is going away, take note so we don't try and do single-panel
+			// remove logic such as changing the index and reflowing when each panel is destroyed
+			this.destroying = true;
+			sup.apply(this, arguments);
+		};
+	}),
+	removeControl: enyo.inherit(function(sup) {
+		return function(inControl) {
+			// Skip extra work during panel destruction.
+			if (this.destroying) {
+				return sup.apply(this, arguments);
+			}
+			// adjust index if the current panel is being removed
+			// so it's either the previous panel or the first one.
+			var newIndex = -1;
+			var controlIndex = enyo.indexOf(inControl, this.controls);
+			if (controlIndex === this.index) {
+				newIndex = Math.max(controlIndex - 1, 0);
+			}
+			sup.apply(this, arguments);
+			if (newIndex !== -1 && this.controls.length > 0) {
+				this.setIndex(newIndex);
+				this.flow();
+				this.reflow();
+			}
+		};
+	}),
 	isPanel: function() {
 		// designed to be overridden in kinds derived from Panels that have
 		// non-panel client controls
 		return true;
 	},
-	flow: function() {
-		this.arrangements = [];
-		this.inherited(arguments);
-	},
-	reflow: function() {
-		this.arrangements = [];
-		this.inherited(arguments);
-		this.refresh();
-	},
+	flow: enyo.inherit(function(sup) {
+		return function() {
+			this.arrangements = [];
+			sup.apply(this, arguments);
+		};
+	}),
+	reflow: enyo.inherit(function(sup) {
+		return function() {
+			this.arrangements = [];
+			sup.apply(this, arguments);
+			this.refresh();
+		};
+	}),
+
 	//* @public
 	/**
 		Returns an array of contained panels.
@@ -178,9 +192,10 @@ enyo.kind({
 		// override setIndex so that indexChanged is called
 		// whether this.index has actually changed or not. Also, do
 		// index clamping here.
-		var prev = this.get("index");
-		this.index = this.clamp(inIndex);
-		this.notifyObservers("index", prev, inIndex);
+		var prevIndex = this.get("index"),
+			newIndex = this.clamp(inIndex);
+		this.index = newIndex;
+		this.notifyObservers("index", prevIndex, newIndex);
 	},
 	/**
 		Sets the active panel to the panel specified by the given index.
@@ -228,13 +243,14 @@ enyo.kind({
 	},
 	//* @protected
 	clamp: function(inValue) {
-		var l = this.getPanels().length-1;
+		var l = this.getPanels().length;
 		if (this.wrap) {
 			// FIXME: dragging makes assumptions about direction and from->start indexes.
 			//return inValue < 0 ? l : (inValue > l ? 0 : inValue);
-			return inValue;
+			inValue %= l;
+			return (inValue < 0) ? inValue + l : inValue;
 		} else {
-			return Math.max(0, Math.min(inValue, l));
+			return Math.max(0, Math.min(inValue, l - 1));
 		}
 	},
 	indexChanged: function(inOld) {
@@ -249,7 +265,7 @@ enyo.kind({
 			this.$.animator.stop();
 			if (this.hasNode()) {
 				if (this.animate) {
-					this.startTransition();
+					this.startTransition(true);
 					this.$.animator.play({
 						startValue: this.fraction
 					});
@@ -262,6 +278,7 @@ enyo.kind({
 	step: function(inSender) {
 		this.fraction = inSender.value;
 		this.stepTransition();
+		return true;
 	},
 	completed: function() {
 		if (this.$.animator.isAnimating()) {
@@ -269,7 +286,7 @@ enyo.kind({
 		}
 		this.fraction = 1;
 		this.stepTransition();
-		this.finishTransition();
+		this.finishTransition(true);
 		return true;
 	},
 	dragstart: function(inSender, inEvent) {
@@ -363,28 +380,32 @@ enyo.kind({
 		if (this.$.animator && this.$.animator.isAnimating()) {
 			this.$.animator.stop();
 		}
-		this.startTransition();
+		this.startTransition(false);
 		this.fraction = 1;
 		this.stepTransition();
-		this.finishTransition();
+		this.finishTransition(false);
 	},
-	startTransition: function() {
+	startTransition: function(sendEvents) {
 		this.fromIndex = this.fromIndex != null ? this.fromIndex : this.lastIndex || 0;
 		this.toIndex = this.toIndex != null ? this.toIndex : this.index;
 		//this.log(this.id, this.fromIndex, this.toIndex);
 		if (this.layout) {
 			this.layout.start();
 		}
-		this.fireTransitionStart();
+		if (sendEvents) {
+			this.fireTransitionStart();
+		}
 	},
-	finishTransition: function() {
+	finishTransition: function(sendEvents) {
 		if (this.layout) {
 			this.layout.finish();
 		}
 		this.transitionPoints = [];
 		this.fraction = 0;
 		this.fromIndex = this.toIndex = null;
-		this.fireTransitionFinish();
+		if (sendEvents) {
+			this.fireTransitionFinish();
+		}
 	},
 	fireTransitionStart: function() {
 		var t = this.startTransitionInfo;
@@ -439,12 +460,20 @@ enyo.kind({
 	statics: {
 		//* @public
 		/**
-			Returns true when window width is 800px or less. This value must be
-			the same as the "max-width" media query used for panel sizing in
-			_Panels.css_.
+			Returns true depending on detection of iOS and Android phone form factors,
+			or when window width is 800px or less.
 		*/
 		isScreenNarrow: function() {
-			return enyo.dom.getWindowWidth() <= 800;
+			var ua = navigator.userAgent, w = enyo.dom.getWindowWidth();
+			switch (enyo.platform.platformName) {
+				case "ios":
+					return (/iP(?:hone|od;(?: U;)? CPU) OS (\d+)/).test(ua);
+				case "android":
+					return (/Mobile/).test(ua) && (enyo.platform.android > 2 ? true : w <= 800);
+				case "androidChrome":
+					return (/Mobile/).test(ua);
+			}
+			return w <= 800;
 		},
 		//* @protected
 		lerp: function(inA0, inA1, inFrac) {

@@ -1,6 +1,7 @@
 enyo.kind({
 	name: "AjaxTest",
 	kind: enyo.TestSuite,
+	noDefer: true,
 	timeout: 10000,
 	testContextSuccess: function (){
 		var self = this;
@@ -124,7 +125,7 @@ enyo.kind({
 			return;
 		}
 		this._testAjax({url: "php/test4.php", method: "POST", postBody: "data"}, null, function(inValue) {
-			if (enyo.platform.ios && enyo.platform.ios >= 6) {
+			if (enyo.platform.ios && enyo.platform.ios == 6) {
 				var status = inValue.cacheCtrl && (inValue.cacheCtrl.indexOf('no-cache') === 0);
 				if (!status) {
 					enyo.log("Bad Cache-Control: " + inValue.cacheCtrl + " expected: " + "no-cache");
@@ -240,5 +241,18 @@ enyo.kind({
 				(req.xhrResponse.headers['content-type'] === "text/plain; charset=utf-8") &&
 				(req.xhrResponse.body === "my error description");
 		});
+	},
+	testProgress: function() {
+		var progress = 0;
+		new enyo.Ajax({url: "php/test7.php"})
+			.progress(this, function(inSender, inEvent){
+				if (inEvent.max === 10) {
+					if (progress === 5 && inEvent.current === 10) {
+						this.finish();
+					}
+				}
+				progress = inEvent.current;
+			})
+			.go();
 	}
 });

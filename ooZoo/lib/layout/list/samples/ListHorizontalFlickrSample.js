@@ -22,10 +22,12 @@ enyo.kind({
 		]},
 		{kind: "enyo.sample.ListHorizontalFlickrSearch", name: "flickrSearch", onResults: "searchResults"}
 	],
-	rendered: function() {
-		this.inherited(arguments);
-		this.search();
-	},
+	rendered: enyo.inherit(function(sup) {
+		return function() {
+			sup.apply(this, arguments);
+			this.search();
+		};
+	}),
 	search: function() {
 		this.searchText = this.$.searchInput.getValue();
 		this.page = 0;
@@ -43,6 +45,7 @@ enyo.kind({
 		} else {
 			this.$.list.refresh();
 		}
+		return true;
 	},
 	setupItem: function(inSender, inEvent) {
 		var i = inEvent.index;
@@ -50,6 +53,7 @@ enyo.kind({
 		this.$.item.addRemoveClass("onyx-selected", inSender.isSelected(inEvent.index));
 		this.$.thumbnail.setSrc(item.thumbnail);
 		this.$.more.canGenerate = !this.results[i+1];
+		return true;
 	},
 	more: function() {
         this.page++;

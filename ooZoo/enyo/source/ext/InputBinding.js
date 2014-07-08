@@ -1,45 +1,24 @@
 //*@public
 /**
+	_enyo.InputBinding_ is a binding designed to have its source or target be an
+	_input_ with an optional _placeholder_ value. This keeps the input from
+	showing _undefined_ when there is no content, as the _placeholder_ value will
+	then be used for display.
 */
 enyo.kind({
-
-	// ...........................
-	// PUBLIC PROPERTIES
-
-	//*@public
 	name: "enyo.InputBinding",
-
-	//*@public
-	kind: "enyo.Binding",
-
-	//*@public
-	twoWay: true,
-
-	// ...........................
-	// PROTECTED PROPERTIES
-
-	// ...........................
-	// COMPUTED PROPERTIES
-
-	// ...........................
-	// PUBLIC METHODS
-
-	// ...........................
-	// PROTECTED METHODS
-
+	kind: enyo.Binding,
+	/**
+		The direction priority for the placeholder text so it is not propagated when
+		an empty string should be.
+	*/
+	placeholderDirection: "source",
+	oneWay: false,
 	//*@protected
 	transform: function (value, direction, binding) {
-		var source = binding.source || {};
-		var target = binding.target || {};
-		var ph = source.placholder || target.placeholder || "";
-		if (!enyo.exists(value) || null === value || value.length === 0) {
-			return ph;
-		} else {
-			return value;
-		}
+		if (value) { return value; }
+		var pd = binding.placeholderDirection,
+			ph = binding[pd].placeholder || "";
+		return ph;
 	}
-
-	// ...........................
-	// OBSERVERS
-
 });

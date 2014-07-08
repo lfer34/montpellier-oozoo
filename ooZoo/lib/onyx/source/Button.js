@@ -1,10 +1,9 @@
 /**
-	_onyx.Button_ is an <a href="#enyo.Button">enyo.Button</a> with Onyx styling
-	applied. The color of the button may be customized by specifying a
-	background color.
+	_onyx.Button_ is an [enyo.Button](#enyo.Button) with Onyx styling	applied. The
+	color of the button may be customized by specifying a background color.
 
-	The *onyx-affirmative*, *onyx-negative*, and *onyx-blue* classes provide
-	some built-in presets.
+	The *onyx-affirmative*, *onyx-negative*, and *onyx-blue* classes provide some
+	built-in presets.
 
 		{kind: "onyx.Button", content: "Button"},
 		{kind: "onyx.Button", content: "Affirmative", classes: "onyx-affirmative"},
@@ -13,42 +12,52 @@
 		{kind: "onyx.Button", content: "Custom", style: "background-color: purple; color: #F1F1F1;"}
 
 	For more information, see the documentation on
-	<a href="https://github.com/enyojs/enyo/wiki/Buttons">Buttons</a> in the
-	Enyo Developer Guide.
+	[Buttons](building-apps/controls/buttons.html) in the Enyo Developer Guide.
 */
 enyo.kind({
 	name: "onyx.Button",
 	kind: "enyo.Button",
 	classes: "onyx-button enyo-unselectable",
-	//* @protected
-	create: function() {
-		//workaround for FirefoxOS which doesn't support :active:hover css selectors
-		//FirefoxOS simulator does :active:hover css selectors, so do additional srcEvent check
-		if(enyo.platform.firefoxOS) {
-			this.handlers.ondown = "fxosDown";
-			this.handlers.onenter = "fxosEnter";
-			this.handlers.ondrag = "fxosDrag";
-			this.handlers.onleave = "fxosLeave";
-			this.handlers.onup = "fxosUp";
+	handlers: {
+		ondown: "down",
+		onenter: "enter",
+		ondragfinish: "dragfinish",
+		onleave: "leave",
+		onup: "up"
+	},
+	down: function(inSender, inEvent) {
+		if (this.disabled) {
+			return true;
 		}
-		this.inherited(arguments);
-	},
-	fxosDown: function(inSender, inEvent) {
 		this.addClass("pressed");
-		this._isInControl = true;
+		this._isPressed = true;
 	},
-	fxosEnter: function(inSender, inEvent) {
-		this._isInControl = true;
+	enter: function(inSender, inEvent) {
+		if (this.disabled) {
+			return true;
+		}
+		if(this._isPressed) {
+			this.addClass("pressed");
+		}
 	},
-	fxosDrag: function(inSender, inEvent) {
-		this.addRemoveClass("pressed", this._isInControl);
-	},
-	fxosLeave: function(inSender, inEvent) {
+	dragfinish: function(inSender, inEvent) {
+		if (this.disabled) {
+			return true;
+		}
 		this.removeClass("pressed");
-		this._isInControl = false;
+		this._isPressed = false;
 	},
-	fxosUp: function(inSender, inEvent) {
+	leave: function(inSender, inEvent) {
+		if (this.disabled) {
+			return true;
+		}
 		this.removeClass("pressed");
-		this._isInControl = false;
+	},
+	up: function(inSender, inEvent) {
+		if (this.disabled) {
+			return true;
+		}
+		this.removeClass("pressed");
+		this._isPressed = false;
 	}
 });

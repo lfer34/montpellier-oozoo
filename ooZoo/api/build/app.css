@@ -1,5 +1,5 @@
 
-/* /home/jenkins/workspace/enyo-github-nightly/api-tool/enyo/tools/../../lib/layout/contextual/source/ContextualLayout.css */
+/* lib\layout\contextual\source\ContextualLayout.css */
 
 /* ContextualLayout.css - popup positioning and border radius adjustments */
 
@@ -60,7 +60,7 @@
   border-top-right-radius: 0px;
 }
 
-/* /home/jenkins/workspace/enyo-github-nightly/api-tool/enyo/tools/../../lib/layout/fittable/source/FittableLayout.css */
+/* lib\layout\fittable\source\FittableLayout.css */
 
 .enyo-fittable-rows-layout {
 	position: relative;
@@ -98,7 +98,12 @@
 	white-space: nowrap;
 }
 
-.enyo-fittable-columns-layout.enyo-center {
+.enyo-locale-right-to-left .enyo-fittable-columns-layout {
+	text-align: right;
+}
+
+.enyo-fittable-columns-layout.enyo-center,
+.enyo-locale-right-to-left .enyo-fittable-columns-layout.enyo-center {
 	text-align: center;
 }
 
@@ -109,6 +114,10 @@
 	vertical-align: top;
 	display: inline-block;
 	white-space: normal;
+}
+
+.enyo-fittable-columns-layout > table {
+	display: inline-table;
 }
 
 .enyo-fittable-columns-layout.enyo-tool-decorator > * {
@@ -132,16 +141,29 @@
 	margin-bottom: 0 !important;
 }
 
-/* /home/jenkins/workspace/enyo-github-nightly/api-tool/enyo/tools/../../lib/layout/list/source/List.css */
+.enyo-locale-right-to-left .enyo-fittable-columns-layout {
+	direction: rtl;
+	text-align: right;
+}
+
+
+/* lib\layout\list\source\List.css */
 
 .enyo-list {
 	position: relative;
 }
 
+.enyo-locale-right-to-left .enyo-list {
+	direction: ltr;
+}
+
+.enyo-locale-right-to-left .enyo-list-page > * {
+	direction: rtl;
+}
+
 .enyo-list-port {
 	overflow: hidden;
 	position: relative;
-	height: 1000000px;
 }
 
 .enyo-list-holdingarea {
@@ -152,6 +174,12 @@
 
 .enyo-list-port.horizontal {
 	white-space: nowrap;
+	width:  1000000px;
+	height: 1000000px;
+}
+
+.enyo-list-port.vertical {
+	height: 1000000px;
 }
 
 .enyo-list-page {
@@ -197,7 +225,7 @@
 	transition: top 0.1s linear, left 0.1s linear;
 }
 
-/* /home/jenkins/workspace/enyo-github-nightly/api-tool/enyo/tools/../../lib/layout/list/source/PulldownList.css */
+/* lib\layout\list\source\PulldownList.css */
 
 .enyo-list-pulldown {
 	position: absolute;
@@ -260,10 +288,10 @@
 	-ms-transform: rotate(180deg);
 }
 
-/* /home/jenkins/workspace/enyo-github-nightly/api-tool/enyo/tools/../../lib/layout/list/source/GridList.css */
+/* lib\layout\list\source\GridList.css */
 
 /*
-	Put anything you reference with "url(../lib/layout/list/source)" in ../assets/
+	Put anything you reference with "url()" in ../assets/
 	This way, you can minify your application, and just remove the "source" folder for production
 */
 .enyo-gridlist {
@@ -299,29 +327,24 @@
 	z-index: -1;
 }
 
-/* /home/jenkins/workspace/enyo-github-nightly/api-tool/enyo/tools/../../lib/layout/list/source/GridListImageItem.css */
+/* lib\layout\list\source\GridListImageItem.css */
 
 /*
-	Put anything you reference with "url(../lib/layout/list/source)" in ../assets/
+	Put anything you reference with "url()" in ../assets/
 	This way, you can minify your application, and just remove the "source" folder for production
 */
 .enyo-gridlist-imageitem {
 	width: 100%;
 	height: 100%;
-	background: #333;
 	color: #fff;
 }
 .enyo-gridlist-imageitem img {
 	display: block;
 	width: 100%;
-	height: auto;
 }
 .enyo-gridlist-imageitem .caption, .enyo-gridlist-imageitem .sub-caption {
-	opacity: 0.7;
-	font-weight: bold;
 	text-align: center;
 	font-size: 10pt;
-	text-transform: uppercase;
 	z-index: 10;
 	padding-top: 10px;
 	width: 100%;
@@ -330,8 +353,13 @@
 	overflow: hidden;
 	color: #fff;
 }
+.enyo-gridlist-imageitem.disabled {
+	opacity: 0.4;
+	filter: alpha(opacity=40);
+}
 
-/* /home/jenkins/workspace/enyo-github-nightly/api-tool/enyo/tools/../../lib/layout/panels/source/arrangers/Arranger.css */
+
+/* lib\layout\panels\source\arrangers\Arranger.css */
 
 .enyo-arranger {
 	position: relative;
@@ -360,7 +388,7 @@
 }
 
 
-/* /home/jenkins/workspace/enyo-github-nightly/api-tool/enyo/tools/../../lib/layout/panels/source/Panels.css */
+/* lib\layout\panels\source\Panels.css */
 
 .enyo-panels {
 }
@@ -375,7 +403,7 @@
 	}
 }
 
-/* /home/jenkins/workspace/enyo-github-nightly/api-tool/enyo/tools/../../lib/layout/tree/source/Node.css */
+/* lib\layout\tree\source\Node.css */
 
 .enyo-node {
 	cursor: default;
@@ -409,7 +437,7 @@
 }
 
 
-/* /home/jenkins/workspace/enyo-github-nightly/api-tool/enyo/tools/../../lib/layout/imageview/source/ImageViewPin.css */
+/* lib\layout\imageview\source\ImageViewPin.css */
 
 
 .pinDebug {
@@ -417,7 +445,7 @@
 	border:1px solid yellow;
 }
 
-/* ../source/foss/syntaxhighlighter_3.0.83_fork/sh-min.css */
+/* source\foss\syntaxhighlighter_3.0.83_fork\sh-min.css */
 
 
 /* styles/shCoreEclipse.css */
@@ -771,7 +799,7 @@
 
 
 
-/* ../source/App.css */
+/* source\App.css */
 
 .tab {
 	background: whitesmoke;
@@ -870,7 +898,7 @@
 	padding: 8px;
 }
 
-/* ../source/presentation.css */
+/* source\presentation.css */
 
 blockquote {
 	margin-top: 0;

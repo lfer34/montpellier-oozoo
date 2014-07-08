@@ -3,16 +3,14 @@
 	specified by setting the _src_ property to a URL.
 
 	If you want to combine an icon with text inside a button, use an
-	<a href="#onyx.Icon">onyx.Icon</a> inside an
-	<a href="#onyx.Button">onyx.Button</a>.
+	[onyx.Icon](#onyx.Icon) inside an [onyx.Button](#onyx.Button).
 
 	The image associated with the _src_ property of the IconButton is assumed
 	to be 32x64-pixel strip with the top half showing the button's normal state
 	and the bottom half showing its state when hovered-over or active.
 
 	For more information, see the documentation on
-	[Buttons](https://github.com/enyojs/enyo/wiki/Buttons) in the Enyo Developer
-	Guide.
+	[Buttons](building-apps/controls/buttons.html) in the Enyo Developer Guide.
 */
 enyo.kind({
 	name: "onyx.IconButton",
@@ -23,36 +21,12 @@ enyo.kind({
 		active: false
 	},
 	classes: "onyx-icon-button",
-	//* @protected
-	create: function() {
-		//workaround for FirefoxOS which doesn't support :active:hover css selectors
-		//FirefoxOS simulator does :active:hover css selectors, so do additional srcEvent check
-		if(enyo.platform.firefoxOS) {
-			this.handlers.ondown = "fxosDown";
-			this.handlers.onenter = "fxosEnter";
-			this.handlers.ondrag = "fxosDrag";
-			this.handlers.onleave = "fxosLeave";
-			this.handlers.onup = "fxosUp";
-		}
-		this.inherited(arguments);
-	},
-	fxosDown: function(inSender, inEvent) {
-		this.addClass("pressed");
-		this._isInControl = true;
-	},
-	fxosEnter: function(inSender, inEvent) {
-		this._isInControl = true;
-	},
-	fxosDrag: function(inSender, inEvent) {
-		this.addRemoveClass("pressed", this._isInControl);
-	},
-	fxosLeave: function(inSender, inEvent) {
-		this.removeClass("pressed");
-		this._isInControl = false;
-	},
-	fxosUp: function(inSender, inEvent) {
-		this.removeClass("pressed");
-		this._isInControl = false;
+	handlers: {
+		ondown: "down",
+		onenter: "enter",
+		ondragfinish: "dragfinish",
+		onleave: "leave",
+		onup: "up"
 	},
 	rendered: function() {
 		this.inherited(arguments);
@@ -63,6 +37,41 @@ enyo.kind({
 			return true;
 		}
 		this.setActive(true);
+	},
+	down: function(inSender, inEvent) {
+		if (this.disabled) {
+			return true;
+		}
+		this.addClass("pressed");
+		this._isPressed = true;
+	},
+	enter: function(inSender, inEvent) {
+		if (this.disabled) {
+			return true;
+		}
+		if(this._isPressed) {
+			this.addClass("pressed");
+		}
+	},
+	dragfinish: function(inSender, inEvent) {
+		if (this.disabled) {
+			return true;
+		}
+		this.removeClass("pressed");
+		this._isPressed = false;
+	},
+	leave: function(inSender, inEvent) {
+		if (this.disabled) {
+			return true;
+		}
+		this.removeClass("pressed");
+	},
+	up: function(inSender, inEvent) {
+		if (this.disabled) {
+			return true;
+		}
+		this.removeClass("pressed");
+		this._isPressed = false;
 	},
 	activeChanged: function() {
 		this.bubble("onActivate");

@@ -1,4 +1,9 @@
 enyo.depends(
 	"macroize.js",
-	"InputBinding.js"
+	"hooks.js",
+	"InputBinding.js",
+	"BooleanBinding.js",
+	"BooleanOnlyBinding.js",
+	"StringBinding.js",
+	"InvertBooleanBinding.js"
 );

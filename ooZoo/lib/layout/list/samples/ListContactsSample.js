@@ -69,10 +69,12 @@ enyo.kind({
 			]
 		}
 	],
-	rendered: function() {
-		this.inherited(arguments);
-		this.populateList();
-	},
+	rendered: enyo.inherit(function(sup) {
+		return function() {
+			sup.apply(this, arguments);
+			this.populateList();
+		};
+	}),
 	setupItem: function(inSender, inEvent) {
 		var i = inEvent.index;
 		var data = this.filter ? this.filtered : this.db;
@@ -90,6 +92,7 @@ enyo.kind({
 			this.$.divider.canGenerate = showd;
 			this.$.item.applyStyle("border-top", showd ? "none" : null);
 		}
+		return true;
 	},
 	refreshList: function() {
 		if (this.filter) {

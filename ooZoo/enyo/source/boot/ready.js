@@ -1,4 +1,4 @@
-(function (scope) {
+(function (scope, enyo) {
 
 	// we need to register appropriately to know when
 	// the document is officially ready, to ensure that
@@ -13,16 +13,27 @@
 	var remove;
 	var add;
 	var flush;
+	var flushScheduled = false;
 
+	//*@public
+	/**
+		Register a callback (and optional "this" context) to run
+		after all the enyo and library code has loaded and the DOMContentLoaded
+		(or equivalent on older browsers) event has been sent.
+
+		If called after system is in a ready state, run the supplied code
+		asynchronously at earliest opportunity.
+	*/
 	enyo.ready = function (fn, context) {
-		if (ready) {
-			run(fn, context);
-		}
-		else {
-			queue.push([fn, context]);
+		queue.push([fn, context]);
+		// schedule another queue flush if needed to run new ready calls
+		if (ready && !flushScheduled) {
+			setTimeout(flush, 0);
+			flushScheduled = true;
 		}
 	};
 
+	//*@protected
 	run = function (fn, context) {
 		fn.call(context || enyo.global);
 	};
@@ -31,13 +42,13 @@
 		// if we're interactive, it should be safe to move
 		// forward because the content has been parsed
 		if ((ready = ("interactive" === doc.readyState))) {
-			if (!~enyo.indexOf(event.type, ["DOMContentLoaded", "readystatechange"])) {
+			if ("DOMContentLoaded" !== event.type && "readystatechange" !== event.type) {
 				remove(event.type, init);
 				flush();
 			}
 		}
-		// for an IE8 fallback and assurance
-		if ((ready = ("complete" === doc.readyState))) {
+		// for an IE8 fallback and legacy WebKit (including webOS 3.x and less) and assurance
+		if ((ready = ("complete" === doc.readyState || "loaded" === doc.readyState))) {
 			remove(event.type, init);
 			flush();
 		}
@@ -61,6 +72,7 @@
 				run.apply(scope, queue.shift());
 			}
 		}
+		flushScheduled = false;
 	};
 
 	// ok, let's hook this up

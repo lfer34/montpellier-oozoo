@@ -27,10 +27,12 @@ enyo.kind({
 			]
 		}
 	],
-	rendered: function() {
-		this.inherited(arguments);
-		this.populateList();
-	},
+	rendered: enyo.inherit(function(sup) {
+		return function() {
+			sup.apply(this, arguments);
+			this.populateList();
+		};
+	}),
 	populateList: function() {
 		this.$.list.setCount(this.data.length);
 		this.$.list.reset();
@@ -41,10 +43,11 @@ enyo.kind({
 		}
 
 		this.$.text.setContent(this.data[inEvent.index]);
+		return true;
 	},
 	setupSwipeItem: function(inSender, inEvent) {
 		if(!this.data[inEvent.index]) {
-			return;
+			return true;
 		}
 
 		if(inEvent.xDirection === -1) {
@@ -60,6 +63,7 @@ enyo.kind({
 			this.$.swipeItem.removeClass("swipeRed");
 			this.$.swipeItem.addClass("swipeGreen");
 		}
+		return true;
 	},
 	swipeComplete: function(inSender, inEvent) {
 	}

@@ -7,9 +7,8 @@
 	while _onchange_ fires when the text has changed and the input subsequently
 	loses focus.
 
-	For more information, see the documentation on
-	[Text Fields](https://github.com/enyojs/enyo/wiki/Text-Fields) in the Enyo
-	Developer Guide.
+	For more information, see the documentation on [Text
+	Fields](building-apps/controls/text-fields.html) in the Enyo Developer Guide.
 */
 enyo.kind({
 	name: "enyo.Input",
@@ -50,36 +49,40 @@ enyo.kind({
 		onclear: "clear",
 		ondragstart: "dragstart"
 	},
-	create: function() {
-		if (enyo.platform.ie) {
-			this.handlers.onkeyup = "iekeyup";
-		}
-		if (enyo.platform.windowsPhone) {
-			this.handlers.onkeydown = "iekeydown";
-		}
-		this.inherited(arguments);
-		this.placeholderChanged();
-		// prevent overriding a custom attribute with null
-		if (this.type) {
-			this.typeChanged();
-		}
-		this.valueChanged();
-	},
-	rendered: function() {
-		this.inherited(arguments);
+	create: enyo.inherit(function (sup) {
+		return function() {
+			if (enyo.platform.ie) {
+				this.handlers.onkeyup = "iekeyup";
+			}
+			if (enyo.platform.windowsPhone) {
+				this.handlers.onkeydown = "iekeydown";
+			}
+			sup.apply(this, arguments);
+			this.placeholderChanged();
+			// prevent overriding a custom attribute with null
+			if (this.type) {
+				this.typeChanged();
+			}
+			this.valueChanged();
+		};
+	}),
+	rendered: enyo.inherit(function (sup) {
+		return function() {
+			sup.apply(this, arguments);
 
-		enyo.makeBubble(this, "focus", "blur");
+			enyo.makeBubble(this, "focus", "blur");
 
-		//Force onchange event to be bubbled inside Enyo for IE8
-		if(enyo.platform.ie == 8){
-			this.setAttribute("onchange", enyo.bubbler);
-		}
+			//Force onchange event to be bubbled inside Enyo for IE8
+			if(enyo.platform.ie == 8){
+				this.setAttribute("onchange", enyo.bubbler);
+			}
 
-		this.disabledChanged();
-		if (this.defaultFocus) {
-			this.focus();
-		}
-	},
+			this.disabledChanged();
+			if (this.defaultFocus) {
+				this.focus();
+			}
+		};
+	}),
 	typeChanged: function() {
 		this.setAttribute("type", this.type);
 	},
@@ -91,9 +94,20 @@ enyo.kind({
 		this.bubble("onDisabledChange");
 	},
 	valueChanged: function() {
-		this.setAttribute("value", this.value);
-		if (this.getNodeProperty("value", this.value) !== this.value) {
-			this.setNodeProperty("value", this.value);
+		var node = this.hasNode(),
+			attrs = this.attributes;
+		if (node) {
+			if (node.value !== this.value) {
+				node.value = this.value;
+			}
+			// we manually update the cached value so that the next time the
+			// attribute is requested or the control is re-rendered it will
+			// have the correct value - this is because calling setAttribute()
+			// in some cases does not receive an appropriate response from the
+			// browser
+			attrs.value = this.value;
+		} else {
+			this.setAttribute("value", this.value);
 		}
 	},
 	iekeyup: function(inSender, inEvent) {

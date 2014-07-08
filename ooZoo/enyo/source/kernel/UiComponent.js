@@ -9,7 +9,7 @@
 */
 enyo.kind({
 	name: "enyo.UiComponent",
-	kind: enyo.Component,
+	kind: "enyo.Component",
 	published: {
 		//* The UiComponent that physically contains this component in the DOM
 		container: null,
@@ -41,32 +41,36 @@ enyo.kind({
 	*/
 	addBefore: undefined,
 	//* @protected
-	statics: {
+	protectedStatics: {
 		_resizeFlags: {showingOnly: true} // don't waterfall these events into hidden controls
 	},
-
-	create: function() {
-		this.controls = [];
-		this.children = [];
-		this.containerChanged();
-		this.inherited(arguments);
-		this.layoutKindChanged();
-	},
-	destroy: function() {
-		// Destroys all non-chrome controls (regardless of owner).
-		this.destroyClientControls();
-		// Removes us from our container.
-		this.setContainer(null);
-		// Destroys chrome controls owned by this.
-		this.inherited(arguments);
-	},
-	importProps: function(inProps) {
-		this.inherited(arguments);
-		if (!this.owner) {
-			//this.log("registering ownerless control [" + this.kindName + "] with enyo.master");
-			this.owner = enyo.master;
-		}
-	},
+	create: enyo.inherit(function (sup) {
+		return function() {
+			this.controls = this.controls || [];
+			this.children = this.children || [];
+			this.containerChanged();
+			sup.apply(this, arguments);
+			this.layoutKindChanged();
+		};
+	}),
+	destroy: enyo.inherit(function (sup) {
+		return function() {
+			// Destroys all non-chrome controls (regardless of owner).
+			this.destroyClientControls();
+			// Removes us from our container.
+			this.setContainer(null);
+			// Destroys chrome controls owned by this.
+			sup.apply(this, arguments);
+		};
+	}),
+	importProps: enyo.inherit(function (sup) {
+		return function(inProps) {
+			sup.apply(this, arguments);
+			if (!this.owner) {
+				this.owner = enyo.master;
+			}
+		};
+	}),
 	// As implemented, _controlParentName_ only works to identify an owned
 	// control created via _createComponents_ (i.e., usually in our _components_
 	// block).	To attach a _controlParent_ via other means, one must call
@@ -74,19 +78,23 @@ enyo.kind({
 	//
 	// We could call _discoverControlParent_ in _addComponent_, but it would
 	// cause a lot of useless checking.
-	createComponents: function() {
-		var results = this.inherited(arguments);
-		this.discoverControlParent();
-		return results;
-	},
+	createComponents: enyo.inherit(function (sup) {
+		return function() {
+			var results = sup.apply(this, arguments);
+			this.discoverControlParent();
+			return results;
+		};
+	}),
 	discoverControlParent: function() {
 		this.controlParent = this.$[this.controlParentName] || this.controlParent;
 	},
-	adjustComponentProps: function(inProps) {
-		// Components we create have us as a container by default.
-		inProps.container = inProps.container || this;
-		this.inherited(arguments);
-	},
+	adjustComponentProps: enyo.inherit(function (sup) {
+		return function(inProps) {
+			// Components we create have us as a container by default.
+			inProps.container = inProps.container || this;
+			sup.apply(this, arguments);
+		};
+	}),
 	// containment
 	containerChanged: function(inOldContainer) {
 		if (inOldContainer) {
@@ -144,7 +152,12 @@ enyo.kind({
 		// Called to add an already created control to the object's control list. It is
 		// not used to create controls and should likely not be called directly.
 		// It can be overridden to detect when controls are added.
-		this.controls.push(inControl);
+		if (inBefore !== undefined) {
+			var idx = (inBefore === null) ? 0 : this.indexOfControl(inBefore);
+			this.controls.splice(idx, 0, inControl);
+		} else {
+			this.controls.push(inControl);
+		}
 		// When we add a Control, we also establish a parent.
 		this.addChild(inControl, inBefore);
 	},
@@ -179,8 +192,7 @@ enyo.kind({
 		// allow delegating the child to a different container
 		if (this.controlParent /*&& !inChild.isChrome*/) {
 			// this.controlParent might have a controlParent, and so on; seek the ultimate parent
-			// inBefore is not passed because that control won't be in the controlParent's scope
-			this.controlParent.addChild(inChild);
+			this.controlParent.addChild(inChild, inBefore);
 		} else {
 			// NOTE: addChild drives setParent.
 			// It's the opposite for setContainer, where containerChanged (in Containable)
@@ -275,7 +287,7 @@ enyo.kind({
 		}
 	},
 	getBubbleTarget: function() {
-		return this._bubble_target || this.parent;
+		return this.bubbleTarget || this.parent || this.owner;
 	}
 });
 
@@ -301,7 +313,7 @@ enyo.master = new enyo.Component({
 		return '';
 	},
 	isDescendantOf: enyo.nop,
-	bubble: function(inEventName, inEvent, inSender) {
+	bubble: function(inEventName, inEvent) {
 		//enyo.log("master event: " + inEventName);
 		if (inEventName == "onresize") {
 			// Resize is special; waterfall this message.
